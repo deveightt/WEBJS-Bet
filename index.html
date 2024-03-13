@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="module" src="/backend/controllers/homeController.js" defer></script>
+    <title>semi form</title>
+
+    <style>
+        .grid-cell {
+            width: 20px;
+            height: 20px;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+
+<body>
+    <form id="semiTruck-Form" action="#">
+
+        <button id="prevButton">previous</button>
+        <button id="nextButton">Next</button>
+        <input type="submit" value="Submit" style="visibility: hidden;">
+    </form>
+
+    <div id="station-1" style="width: 100px; height: 100px; background-color: black;"></div>
+    <button id="debugBTN">+ Block</button>
+
+    <div class="dropZone zoneGrid" style="width: 200px; height: 200px; background-color: turquoise;"></div>
+    <!-- Grid cells will be dynamically added here -->
+    </div>
+
+    <script src="/scripts/sampleForm.js"></script>
+</body>
+
+</html>

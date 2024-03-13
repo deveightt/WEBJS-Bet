@@ -1,0 +1,233 @@
+{
+  "colors": ["green", "red", "blue", "yellow", "purple"],
+  "types": ["cold", "fragile", "default", "pallets", "fast"],
+
+  "blocks": {
+    "I": {
+      "rotations": [
+        {
+          "start_position": { "x": 0, "y": 0 },
+          "translations": [
+            [0, 0],
+            [1, 0],
+            [2, 0],
+            [3, 0]
+          ]
+        }
+      ]
+    },
+    "O": {
+      "rotations": [
+        {
+          "start_position": { "x": 0, "y": 0 },
+          "translations": [
+            [0, 0],
+            [1, 0],
+            [0, 1],
+            [1, 1]
+          ]
+        }
+      ]
+    },
+    "T": {
+      "rotations": [
+        {
+          "start_position": { "x": 0, "y": 0 },
+          "translations": [
+            [1, 0],
+            [0, 1],
+            [1, 1],
+            [2, 1]
+          ]
+        },
+        {
+          "start_position": { "x": 0, "y": 1 },
+          "translations": [
+            [1, -1],
+            [0, 0],
+            [1, 0],
+            [1, 1]
+          ]
+        },
+        {
+          "start_position": { "x": 1, "y": 1 },
+          "translations": [
+            [-1, 0],
+            [0, -1],
+            [0, 0],
+            [1, 0]
+          ]
+        },
+        {
+          "start_position": { "x": 1, "y": 0 },
+          "translations": [
+            [0, -1],
+            [0, 0],
+            [-1, 1],
+            [0, 1]
+          ]
+        }
+      ]
+    },
+    "L": {
+      "rotations": [
+        {
+          "start_position": { "x": 0, "y": 0 },
+          "translations": [
+            [0, 0],
+            [1, 0],
+            [2, 0],
+            [2, 1]
+          ]
+        },
+        {
+          "start_position": { "x": 0, "y": 1 },
+          "translations": [
+            [1, -1],
+            [1, 0],
+            [0, 1],
+            [1, 1]
+          ]
+        },
+        {
+          "start_position": { "x": 0, "y": 0 },
+          "translations": [
+            [0, -1],
+            [0, 0],
+            [1, 0],
+            [2, 0]
+          ]
+        },
+        {
+          "start_position": { "x": 0, "y": 1 },
+          "translations": [
+            [-1, 1],
+            [0, 1],
+            [0, 0],
+            [0, -1]
+          ]
+        }
+      ]
+    },
+    "J": {
+      "rotations": [
+        {
+          "start_position": { "x": 0, "y": 1 },
+          "translations": [
+            [0, -1],
+            [0, 0],
+            [1, 0],
+            [2, 0]
+          ]
+        },
+        {
+          "start_position": { "x": 0, "y": 0 },
+          "translations": [
+            [1, 1],
+            [1, 0],
+            [0, 1],
+            [0, 2]
+          ]
+        },
+        {
+          "start_position": { "x": 0, "y": 0 },
+          "translations": [
+            [0, 0],
+            [1, 0],
+            [2, 0],
+            [2, -1]
+          ]
+        },
+        {
+          "start_position": { "x": 0, "y": 0 },
+          "translations": [
+            [1, -1],
+            [0, 0],
+            [1, 0],
+            [1, 1]
+          ]
+        }
+      ]
+    },
+    "S": {
+      "rotations": [
+        {
+          "start_position": { "x": 0, "y": 1 },
+          "translations": [
+            [1, 0],
+            [2, 0],
+            [0, 1],
+            [1, 1]
+          ]
+        },
+        {
+          "start_position": { "x": 0, "y": 0 },
+          "translations": [
+            [0, 0],
+            [0, -1],
+            [1, -1],
+            [1, -2]
+          ]
+        },
+        {
+          "start_position": { "x": 0, "y": 0 },
+          "translations": [
+            [1, 0],
+            [2, 0],
+            [0, 1],
+            [1, 1]
+          ]
+        },
+        {
+          "start_position": { "x": 0, "y": 0 },
+          "translations": [
+            [0, 0],
+            [0, -1],
+            [1, -1],
+            [1, -2]
+          ]
+        }
+      ]
+    },
+    "Z": {
+      "rotations": [
+        {
+          "start_position": { "x": 0, "y": 0 },
+          "translations": [
+            [0, 0],
+            [1, 0],
+            [1, 1],
+            [2, 1]
+          ]
+        },
+        {
+          "start_position": { "x": 0, "y": 1 },
+          "translations": [
+            [1, -1],
+            [0, 0],
+            [1, 0],
+            [0, 1]
+          ]
+        },
+        {
+          "start_position": { "x": 0, "y": 0 },
+          "translations": [
+            [0, 0],
+            [1, 0],
+            [1, 1],
+            [2, 1]
+          ]
+        },
+        {
+          "start_position": { "x": 0, "y": 1 },
+          "translations": [
+            [1, -1],
+            [0, 0],
+            [1, 0],
+            [0, 1]
+          ]
+        }
+      ]
+    }
+  }
+}
