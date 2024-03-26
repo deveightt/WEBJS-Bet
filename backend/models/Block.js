@@ -96,10 +96,6 @@ class Block {
         document.addEventListener('mouseup', this.onMouseUp.bind(this));
     }
 
-
-
-
-
     onMouseMove(event) {
         if (!this.selectedPart) return; // No part selected, exit
         // Calculate the movement offset relative to the initial click position
@@ -112,8 +108,6 @@ class Block {
         this.blockContainer.style.left = `${newBlockX}px`;
         this.blockContainer.style.top = `${newBlockY}px`;
     }
-
-
 
     onMouseUp(event) {
         if (!this.selectedPart) return; // No part selected, exit
@@ -162,36 +156,29 @@ class Block {
             // Reset block position to original position
             this.resetBlockPosition();
         }
-
         // Reset selected part and initial positions
         this.resetSelectedPartAndPositions();
     }
 
     checkBlockOccupied(startX, startY) {
-        // Check each grid cell required by the block and return true if any are occupied
         for (const [xOffset, yOffset] of this.translations) {
             const gridX = startX + xOffset;
             const gridY = startY + yOffset;
 
-            // Check if the grid cell is within bounds and not occupied
             if (!this.isGridCellEmpty(gridX, gridY)) {
                 return true; // Block is occupied or out of bounds
             }
         }
-
         return false; // Block can be placed
     }
 
     placeBlockInGrid(startX, startY, coordList) {
-        // Mark each grid cell in the coordList as occupied
         for (const [gridX, gridY] of coordList) {
             const gridCell = document.querySelector(`.grid-cell[data-x="${gridX}"][data-y="${gridY}"]`);
             gridCell.classList.add('occupied');
             gridCell.dataset.blockId = this.blockContainer.dataset.blockId;
             gridCell.style.backgroundColor = this.color;
         }
-
-        // Make the block un-draggable
         this.blockContainer.removeEventListener('mousedown', this.onMouseDown.bind(this));
         this.blockContainer.remove();
         this.station.dispatchEvent(new CustomEvent('blockPlaced', { detail: this.station.id }));
@@ -208,34 +195,22 @@ class Block {
         return coordList;
     }
 
-
-
-
     isGridCellEmpty(gridX, gridY) {
         const gridCell = document.querySelector(`.grid-cell[data-x="${gridX}"][data-y="${gridY}"]`);
         return gridCell && !gridCell.classList.contains('occupied');
     }
 
     resetBlockPosition() {
-        // Reset block position to original position
         this.blockContainer.style.left = `${this.initialBlockX}px`;
         this.blockContainer.style.top = `${this.initialBlockY}px`;
     }
 
     resetSelectedPartAndPositions() {
-        // Reset selected part and initial positions
         this.selectedPart = null;
         this.initialMouseX = null;
         this.initialMouseY = null;
         this.initialPartX = null;
         this.initialPartY = null;
     }
-
-
-
-
-
-
 }
-
 export default Block;

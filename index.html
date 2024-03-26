@@ -1,37 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script type="module" src="/backend/controllers/homeController.js" defer></script>
-    <title>semi form</title>
-
-    <style>
-        .grid-cell {
-            width: 20px;
-            height: 20px;
-            border: 1px solid black;
-        }
-    </style>
+    <title>Vrachtwagen Creator</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-    <form id="semiTruck-Form" action="#">
-
-        <button id="prevButton">previous</button>
-        <button id="nextButton">Next</button>
-        <input type="submit" value="Submit" style="visibility: hidden;">
+    <form id="truckForm">
+        <div class="form-group">
+            <label for="length">Lengte (max 10):</label>
+            <input type="number" id="length" name="length" max="10" required>
+        </div>
+        <div class="form-group">
+            <label for="width">Breedte (max 10):</label>
+            <input type="number" id="width" name="width" max="10" required>
+        </div>
+        <div class="form-group">
+            <label for="interval">Aankomst interval (seconden):</label>
+            <input type="number" id="interval" name="interval" required>
+        </div>
+        <div class="form-group">
+            <label for="type">Type:</label>
+            <select id="type" name="type" required>
+                <option value="koud">Koud transport</option>
+                <option value="breekbaar">Breekbaar transport</option>
+                <option value="algemeen">Algemeen transport</option>
+                <option value="pallets">Pallets</option>
+                <option value="snelkoerier">Snelkoerier</option>
+            </select>
+        </div>
+        <button type="submit">Maak Vrachtwagen</button>
+        
     </form>
+  
+    <div class="extraFields">
+        <label for="locationInput">Locatie voor Weercheck:</label>
+        <input type="text" id="locationInput" placeholder="Stad naam" value="Amsterdam">
+        <button id="checkWeatherBtn">Check Weer</button>  
+        <button id="addConveyorBelt">Voeg Conveyor Belt toe</button>
+    </div>
+    
+    <div id="weatherResult"></div>
+    <div id="apiResponseContainer"></div>
+    
 
-    <div id="station-1" style="width: 100px; height: 100px; background-color: black;"></div>
-    <button id="debugBTN">+ Block</button>
+    <div id="conveyorBelt">
 
-    <div class="dropZone zoneGrid" style="width: 200px; height: 200px; background-color: turquoise;"></div>
-    <!-- Grid cells will be dynamically added here -->
     </div>
 
-    <script src="/scripts/sampleForm.js"></script>
-</body>
+    <div id="truckContainer">
 
+    </div>
+
+    <script src="backend/models/Truck.js"></script>
+    <script src="backend/controllers/TruckController.js"></script>
+    <script type="module" src="script.js"></script>
+    <!-- <script type="module" src="backend/controllers/TetrominoController.js"></script> -->
+
+</body>
 </html>
