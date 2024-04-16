@@ -7,10 +7,18 @@ class Tetromino {
     enableDragDrop(element) {
         element.setAttribute('draggable', true);
         element.addEventListener('dragstart', (event) => {
+            const rect = element.getBoundingClientRect();
+            // Store the relative position inside the Tetromino where it was grabbed
+            console.log(event.clientX, rect.left, event.clientY, rect.top)
+            console.log(event.clientX - rect.left, event.clientY - rect.top)
+            element.dataset.dragOffsetX = event.clientX - rect.left;
+            element.dataset.dragOffsetY = event.clientY - rect.top;
             event.dataTransfer.setData('text/plain', element.id);
             event.dataTransfer.effectAllowed = 'move';
         });
     }
+
+
 
     draw(container) {
         const tetrominoElement = document.createElement('div');

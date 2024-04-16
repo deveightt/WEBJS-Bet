@@ -7,13 +7,13 @@ body {
     margin: 10px;
     display: flex;
     flex-wrap: wrap;
-    gap: 20px; 
+    gap: 20px;
     margin-bottom: 20px;
 }
 
 .form-group {
     display: flex;
-    flex-direction: column; 
+    flex-direction: column;
 }
 
 button {
@@ -25,9 +25,11 @@ button {
     width: 100%;
     position: relative;
     overflow: hidden;
-    height: 70px; /* Aan te passen naar de gewenste hoogte */
+    height: 70px;
+    /* Aan te passen naar de gewenste hoogte */
     margin-right: 20px;
-    background-color: #000; /* Zwarte achtergrond voor de loopband */
+    background-color: #000;
+    /* Zwarte achtergrond voor de loopband */
     border: 1px solid #ddd;
 }
 
@@ -36,26 +38,31 @@ button {
     position: absolute;
     top: 0;
     left: 0;
-    width: 200%; /* Tweemaal de breedte voor een naadloze herhaling */
+    width: 200%;
+    /* Tweemaal de breedte voor een naadloze herhaling */
     height: 100%;
-    background-size: 50px 70px; /* Grootte van de individuele driehoek en loopbandhoogte */
+    background-size: 50px 70px;
+    /* Grootte van de individuele driehoek en loopbandhoogte */
     background-image: repeating-linear-gradient(-45deg, transparent, transparent 24px, rgb(61, 60, 60) 25px, rgb(94, 93, 93) 50px);
     animation: conveyorBeltAnimation 10s linear infinite;
 }
 
 @keyframes conveyorBeltAnimation {
     from {
-        transform: translateX(-50%); /* Begin van de helft van de breedte verschoven voor een naadloze herhaling */
+        transform: translateX(-50%);
+        /* Begin van de helft van de breedte verschoven voor een naadloze herhaling */
     }
+
     to {
-        transform: translateX(0); /* Beweegt de achtergrond terug naar de startpositie */
+        transform: translateX(0);
+        /* Beweegt de achtergrond terug naar de startpositie */
     }
 }
 
-#truckContainer { 
-    display: flex; 
-    flex-wrap: wrap; 
-    gap: 20px; 
+#truckContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
     margin-top: 30px;
     margin: 10px;
 }
@@ -77,11 +84,13 @@ button {
     height: 30px;
 }
 
-.drop-zone {
+.drop-zone,
+.truck-container {
     border: 2px dashed #ccc;
     padding: 10px;
     margin-top: 20px;
-    min-height: 100px; /* Adjust based on your needs */
+    min-height: 100px;
+    /* Adjust based on your needs */
     position: relative;
     background-color: #f9f9f9;
 }

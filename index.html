@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vrachtwagen Creator</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
+    <button id="bgbutton">stop
+    </button>
     <form id="truckForm">
         <div class="form-group">
             <label for="length">Lengte (max 10):</label>
@@ -32,23 +36,36 @@
         </div>
         <button type="submit">Maak Vrachtwagen</button>
     </form>
-  
+
     <div class="extraFields">
         <label for="locationInput">Locatie voor Weercheck:</label>
         <input type="text" id="locationInput" placeholder="Stad naam" value="Amsterdam">
-        <button id="checkWeatherBtn">Check Weer</button>  
+        <button id="checkWeatherBtn">Check Weer</button>
         <button id="addConveyorBelt">Voeg Conveyor Belt toe</button>
     </div>
-    
+
     <div id="weatherResult"></div>
     <div id="apiResponseContainer"></div>
 
-    <div id="conveyorBelt" class="drop-zone">Conveyor Belt Area</div>
+    <div id="conveyorBelt">Conveyor Belt Area</div>
 
-    <div id="truckContainer" class="drop-zone">Truck Container</div>
+    <div id="truckContainer" class="truck-container">Truck Container</div>
 
     <script src="backend/models/Truck.js"></script>
     <script src="backend/controllers/TruckController.js"></script>
     <script type="module" src="script.js"></script>
+    <div id="coords">X: -, Y: -</div>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const coordsDiv = document.getElementById('coords');
+
+            document.addEventListener('mousemove', (event) => {
+                const x = event.clientX;
+                const y = event.clientY;
+                coordsDiv.textContent = `X: ${x}, Y: ${y}`;
+            });
+        });
+    </script>
 </body>
+
 </html>

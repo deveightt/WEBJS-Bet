@@ -2,6 +2,7 @@ import TetrominoController from './backend/controllers/TetrominoController.js';
 import WeatherController from './backend/controllers/WeatherController.js';
 
 document.addEventListener('DOMContentLoaded', () => {
+    let moveB = true;
     const tetrominoController = new TetrominoController();
     const conveyorBelt = document.getElementById('conveyorBelt');
     const weatherController = new WeatherController('beeecd8942');
@@ -9,44 +10,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const tetrominos = document.querySelectorAll('.tetromino');
     const tetrominoAnimationFrames = new Map();
 
+    let bgbutton = document.getElementById('bgbutton');
+    bgbutton.addEventListener('click', function () {
+        moveB = !moveB;
+        console.log(moveB);
+    });
+
     tetrominos.forEach(tetromino => {
         tetromino.setAttribute('draggable', true);
-        tetromino.addEventListener('dragstart', function(event) {
+        tetromino.addEventListener('dragstart', function (event) {
             event.dataTransfer.setData('text/plain', event.target.id);
         });
     });
     // Allow the truck container to receive drop events
-    truckContainer.addEventListener('drop', function(event) {
-        event.preventDefault();
 
-        const tetrominoId = event.dataTransfer.getData('text');
-        const tetromino = document.getElementById(tetrominoId);
 
-        if (tetromino) {
-            stopTetrominoMovement(tetrominoId);
 
-            const truckRect = truckContainer.getBoundingClientRect();
-            const droppedX = event.clientX - truckRect.left;
-            const droppedY = event.clientY - truckRect.top;
 
-            // Snap the tetromino to the nearest grid position
-            // The grid cell size (e.g., 30x30) must match your CSS settings for the truck grid
-            const gridX = (Math.floor(droppedX / 30) * 30) + 16;
-            const gridY = (Math.floor(droppedY / 30) * 30) + 20;
 
-            // Update the position of the tetromino to snap to the truck's grid
-            tetromino.style.position = 'absolute';
-            tetromino.style.left = `${gridX}px`;
-            tetromino.style.top = `${gridY}px`;
-
-            // Append the tetromino to the truckContainer to make it a child of the truck
-            truckContainer.appendChild(tetromino);
-
-            // If the tetrominos are being animated on the conveyor belt, remove that animation
-            tetromino.style.transform = 'none';
-        }
-    });
-    
 
     document.getElementById('checkWeatherBtn').addEventListener('click', () => {
         const city = document.getElementById('locationInput').value;
@@ -61,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
         resultDiv.innerHTML = restrictions.join('<br>');
     }
 
-    
+
     function startConveyorBelt() {
         setInterval(() => {
             const tetrominoElement = tetrominoController.drawRandomTetromino(conveyorBelt);
@@ -82,7 +63,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             };
 
-            move();
+            if (moveB) {
+                move();
+            } else {
+                let blocks = conveyorBelt.childNodes;
+                blocks.forEach(block => {
+                    stopTetrominoMovement(block.id);
+                });
+            }
         }, 1500);
     }
 
@@ -113,15 +101,15 @@ document.addEventListener('DOMContentLoaded', () => {
         e.target.appendChild(tetromino);
     }
 
-    window.returnTetrominoToBelt = function(tetrominoId) {
+    window.returnTetrominoToBelt = function (tetrominoId) {
         const tetrominoElement = document.getElementById(tetrominoId);
         // Stel opnieuw in voor animatie of maak opnieuw zichtbaar indien nodig
         tetrominoElement.style.display = 'block';
         // Eventueel extra logica om de positie van de tetromino te resetten
-      };
+    };
 
 
-      // TODO: FiX
+    // TODO: FiX
     function createConveyorBelt() {
         const conveyorBelt = document.createElement('div');
         conveyorBelt.className = 'conveyorBelt';
