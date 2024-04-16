@@ -21,76 +21,53 @@ class Truck {
 
     const truck = document.createElement('div');
     truck.classList.add('truck');
+    truck.style.display = 'grid';
     truck.style.gridTemplateColumns = `repeat(${this.width}, 30px)`;
-
+    truck.style.gridTemplateRows = `repeat(${this.length}, 30px)`; // Ensure you have this line to set up the grid rows
+  
     for (let i = 0; i < this.length * this.width; i++) {
       const block = document.createElement('div');
-      block.classList.add('truck-block');
+      block.className = 'truck-block';
+      block.style.width = '30px';
+      block.style.height = '30px';
+
+      // Set up each grid cell as a drop zone
+      block.addEventListener('dragover', event => event.preventDefault());
+      block.addEventListener('drop', event => {
+          event.preventDefault();
+          const tetrominoId = event.dataTransfer.getData('text');
+          const tetromino = document.getElementById(tetrominoId);
+          if (tetromino) {
+              stopTetrominoMovement(tetrominoId);
+
+              // Append the tetromino to the specific grid cell (block)
+              block.appendChild(tetromino);
+              tetromino.style.position = 'initial'; // Reset styles if necessary
+              tetromino.style.transform = 'none'; // Remove any previous transformations
+          }
+      });
+
       truck.appendChild(block);
-    }
-
-    truckWrapper.appendChild(truck);
-    return truckWrapper;
   }
 
-  calculateDropPosition(e) {
-    const truckElement = e.currentTarget;
-    const rect = truckElement.getBoundingClientRect();
-    const x = e.clientX - rect.left; // X-positie binnen de truck
-    const y = e.clientY - rect.top; // Y-positie binnen de truck
-    const col = Math.floor(x / 30); // Converteer pixel naar kolomindex
-    const row = Math.floor(y / 30); // Converteer pixel naar rijindex
-    return { col, row };
-  }
+  truckWrapper.appendChild(truck);
+  return truckWrapper;
+}
 
+  addDropListeners() {
+    this.container.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'move';
+    });
 
-  makeDropzone() {
-    const truckElement = this.createTruckElement();
-    truckElement.querySelector('.truck').addEventListener('dragover', (e) => {
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'move';
-    }, false);
-
-    truckElement.querySelector('.truck').addEventListener('drop', (e) => {
-      e.preventDefault();
-      const tetrominoId = e.dataTransfer.getData('tetrominoId');
-      const tetrominoShape = JSON.parse(e.dataTransfer.getData('text'));
-      
-      // Bepaal drop-positie (deze functionaliteit moet worden geïmplementeerd)
-      const { col, row } = this.calculateDropPosition(e);
-
-      if (this.canPlaceTetromino(tetrominoShape, col, row)) {
-        this.placeTetromino(tetrominoShape, col, row);
-        document.getElementById(tetrominoId).style.display = 'none'; // Verberg de gesleepte tetromino.
-        // Hier kun je logica toevoegen om een 'geplaatste' visuele representatie van de tetromino te tonen.
-      } else {
-        window.returnTetrominoToBelt(tetrominoId); // Verwijst naar de globaal gedefinieerde functie.
-      }
-    }, false);
-
-    return truckElement;
-  }
-
-  canPlaceTetromino(shape, posX, posY) {
-    // Controleer of de tetromino binnen de grid past zonder conflicten
-    for (let y = 0; y < shape.length; y++) {
-      for (let x = 0; x < shape[y].length; x++) {
-        if (shape[y][x] && (this.grid[y + posY][x + posX] === 1)) {
-          return false; // Conflict gedetecteerd
+    this.container.addEventListener('drop', (event) => {
+        event.preventDefault();
+        const tetrominoId = event.dataTransfer.getData('text/plain');
+        const tetrominoElement = document.getElementById(tetrominoId);
+        if (tetrominoElement) {
+            this.container.appendChild(tetrominoElement);
+            tetrominoElement.style.position = 'static'; 
         }
-      }
-    }
-    return true; // Geen conflicten, plaatsing is mogelijk
-  }
-
-  placeTetromino(shape, posX, posY) {
-    // Markeer de bezette cellen in de grid als bezet
-    for (let y = 0; y < shape.length; y++) {
-      for (let x = 0; x < shape[y].length; x++) {
-        if (shape[y][x]) {
-          this.grid[y + posY][x + posX] = 1;
-        }
-      }
-    }
+    });
   }
 }

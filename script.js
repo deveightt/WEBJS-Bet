@@ -5,6 +5,48 @@ document.addEventListener('DOMContentLoaded', () => {
     const tetrominoController = new TetrominoController();
     const conveyorBelt = document.getElementById('conveyorBelt');
     const weatherController = new WeatherController('beeecd8942');
+    const truckContainer = document.getElementById('truckContainer');
+    const tetrominos = document.querySelectorAll('.tetromino');
+    const tetrominoAnimationFrames = new Map();
+
+    tetrominos.forEach(tetromino => {
+        tetromino.setAttribute('draggable', true);
+        tetromino.addEventListener('dragstart', function(event) {
+            event.dataTransfer.setData('text/plain', event.target.id);
+        });
+    });
+    // Allow the truck container to receive drop events
+    truckContainer.addEventListener('drop', function(event) {
+        event.preventDefault();
+
+        const tetrominoId = event.dataTransfer.getData('text');
+        const tetromino = document.getElementById(tetrominoId);
+
+        if (tetromino) {
+            stopTetrominoMovement(tetrominoId);
+
+            const truckRect = truckContainer.getBoundingClientRect();
+            const droppedX = event.clientX - truckRect.left;
+            const droppedY = event.clientY - truckRect.top;
+
+            // Snap the tetromino to the nearest grid position
+            // The grid cell size (e.g., 30x30) must match your CSS settings for the truck grid
+            const gridX = (Math.floor(droppedX / 30) * 30) + 16;
+            const gridY = (Math.floor(droppedY / 30) * 30) + 20;
+
+            // Update the position of the tetromino to snap to the truck's grid
+            tetromino.style.position = 'absolute';
+            tetromino.style.left = `${gridX}px`;
+            tetromino.style.top = `${gridY}px`;
+
+            // Append the tetromino to the truckContainer to make it a child of the truck
+            truckContainer.appendChild(tetromino);
+
+            // If the tetrominos are being animated on the conveyor belt, remove that animation
+            tetromino.style.transform = 'none';
+        }
+    });
+    
 
     document.getElementById('checkWeatherBtn').addEventListener('click', () => {
         const city = document.getElementById('locationInput').value;
@@ -19,29 +61,56 @@ document.addEventListener('DOMContentLoaded', () => {
         resultDiv.innerHTML = restrictions.join('<br>');
     }
 
+    
     function startConveyorBelt() {
         setInterval(() => {
             const tetrominoElement = tetrominoController.drawRandomTetromino(conveyorBelt);
-
-            // Startpositie instellen buiten het zicht van het scherm aan de linkerzijde
-            let startPosition = -50; // Dit zorgt ervoor dat het 'van buiten het scherm' lijkt te komen
+            let startPosition = -50; // Start off-screen to the left
             tetrominoElement.style.transform = `translateX(${startPosition}px)`;
 
-            // Begin met het verplaatsen van de tetromino langs de lopende band
             const move = () => {
-                let newPosition = startPosition += 1.75; // Pas dit aan om de snelheid te veranderen
+                let newPosition = startPosition += 1.75;
                 tetrominoElement.style.transform = `translateX(${newPosition}px)`;
 
-                // Controleer of de tetromino het einde van de conveyorBelt heeft bereikt
                 if (newPosition > conveyorBelt.offsetWidth) {
-                    conveyorBelt.removeChild(tetrominoElement); // Verwijder de tetromino
+                    conveyorBelt.removeChild(tetrominoElement);
+                    // If the tetromino reaches the end, remove it from the map
+                    tetrominoAnimationFrames.delete(tetrominoElement.id);
                 } else {
-                    requestAnimationFrame(move); // Blijf de tetromino bewegen
+                    // Save the request ID for the current frame to the map
+                    tetrominoAnimationFrames.set(tetrominoElement.id, requestAnimationFrame(move));
                 }
             };
 
-            move(); // Start de beweging van deze tetromino
-        }, 1500); // Genereer elke 3 seconden een nieuwe tetromino
+            move();
+        }, 1500);
+    }
+
+    function stopTetrominoMovement(tetrominoId) {
+        if (tetrominoAnimationFrames.has(tetrominoId)) {
+            cancelAnimationFrame(tetrominoAnimationFrames.get(tetrominoId));
+            tetrominoAnimationFrames.delete(tetrominoId);
+        }
+    }
+
+    function handleDragStart(e) {
+        e.dataTransfer.setData('text/plain', e.target.id);
+    }
+
+    document.querySelectorAll('.drop-zone').forEach(zone => {
+        zone.addEventListener('dragover', handleDragOver);
+        zone.addEventListener('drop', handleDrop);
+    });
+
+    function handleDragOver(e) {
+        e.preventDefault();
+    }
+
+    function handleDrop(e) {
+        e.preventDefault();
+        const tetrominoId = e.dataTransfer.getData('text');
+        const tetromino = document.getElementById(tetrominoId);
+        e.target.appendChild(tetromino);
     }
 
     window.returnTetrominoToBelt = function(tetrominoId) {
@@ -51,6 +120,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Eventueel extra logica om de positie van de tetromino te resetten
       };
 
+
+      // TODO: FiX
     function createConveyorBelt() {
         const conveyorBelt = document.createElement('div');
         conveyorBelt.className = 'conveyorBelt';
