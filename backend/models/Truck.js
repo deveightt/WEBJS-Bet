@@ -4,10 +4,13 @@ class Truck {
     this.width = width;
     this.type = type;
     this.grid = this.initializeGrid(length, width);
+    this.container = null;
+    this.blocks = [];
+    this.mouseCoord = { x: 0, y: 0 };
   }
 
   initializeGrid(length, width) {
-    return Array.from({ length }, () => Array.from({ length: width }, () => 0));
+    return Array.from({ length }, () => Array.from({ length: width }, () => ({ filled: false })));
   }
 
   createTruckElement() {
@@ -17,98 +20,137 @@ class Truck {
     const label = document.createElement('div');
     label.textContent = `${this.type} - ${this.length}x${this.width}`;
     label.classList.add('label');
+    label.classList.add('unselectable');
     truckWrapper.appendChild(label);
 
     const truck = document.createElement('div');
     truck.classList.add('truck');
     truck.classList.add('drop-zone');
-
     truck.style.display = 'grid';
     truck.style.gridTemplateColumns = `repeat(${this.width}, 30px)`;
-    truck.style.gridTemplateRows = `repeat(${this.length}, 30px)`; // Ensure you have this line to set up the grid rows
+    truck.style.gridTemplateRows = `repeat(${this.length}, 30px)`;
+    truck.dataset.cellSize = 30;
 
     for (let i = 0; i < this.length * this.width; i++) {
       const block = document.createElement('div');
       block.className = 'truck-block';
       block.style.width = '30px';
       block.style.height = '30px';
-
-      // Set up each grid cell as a drop zone
-      block.addEventListener('dragover', event => event.preventDefault());
-      block.addEventListener('drop', event => {
-        event.preventDefault();
-        const tetrominoId = event.dataTransfer.getData('text');
-        const tetromino = document.getElementById(tetrominoId);
-        if (tetromino) {
-          stopTetrominoMovement(tetrominoId);
-
-          // Append the tetromino to the specific grid cell (block)
-          block.appendChild(tetromino);
-          tetromino.style.position = 'initial'; // Reset styles if necessary
-          tetromino.style.transform = 'none'; // Remove any previous transformations
-        }
-      });
+      block.dataset.x = i % this.width;
+      block.dataset.y = Math.floor(i / this.width);
+      block.dataset.filled = false;
+      block.addEventListener('dragover', event => {
+        event.preventDefault()
+        this.mouseCoord.x = block.dataset.x;
+        this.mouseCoord.y = block.dataset.y;
+      }
+      );
       truck.appendChild(block);
     }
-    truck.addEventListener('drop', function (event) {
-      event.preventDefault();
-      const tetrominoId = event.dataTransfer.getData('text');
-      const tetromino = document.getElementById(tetrominoId);
-      if (tetromino) {
-        const dragOffsetX = parseInt(tetromino.dataset.dragOffsetX, 10);
-        const dragOffsetY = parseInt(tetromino.dataset.dragOffsetY, 10);
-        const truckRect = truck.getBoundingClientRect();
-        const gridCellSize = 30; // Grid cell size
 
-        // Calculate where the cursor is within the truck when dropped
-        const cursorXInsideTruck = event.clientX - truckRect.left;
-        const cursorYInsideTruck = event.clientY - truckRect.top;
-
-        // Calculate where the top-left corner of the Tetromino should be based on where it was grabbed
-        const tetrominoNewX = cursorXInsideTruck - dragOffsetX;
-        const tetrominoNewY = cursorYInsideTruck - dragOffsetY;
-
-        // Snap these coordinates to the nearest grid positions
-        const snappedX = Math.floor(tetrominoNewX / gridCellSize) * gridCellSize;
-        const snappedY = Math.floor(tetrominoNewY / gridCellSize) * gridCellSize;
-
-        console.log(`Final snapped positions: X = ${snappedX}, Y = ${snappedY}`);
-
-        // Ensure the Tetromino fits within the bounds
-        if (snappedX >= 0 && snappedX + tetromino.offsetWidth <= truckRect.width &&
-          snappedY >= 0 && snappedY + tetromino.offsetHeight <= truckRect.height) {
-          tetromino.style.position = 'absolute';
-          tetromino.style.left = `${snappedX}px`;
-          tetromino.style.top = `${snappedY}px`;
-          truckContainer.appendChild(tetromino);
-          tetromino.style.transform = 'none';
-        } else {
-          console.error('Tetromino drop out of bounds, reverting to initial position or handling as needed.');
-        }
-      }
-    });
-
-
-
-
+    truck.addEventListener('drop', this.handleDrop.bind(this));
     truckWrapper.appendChild(truck);
+    this.container = truckWrapper;
     return truckWrapper;
   }
 
-  addDropListeners() {
-    this.container.addEventListener('dragover', (event) => {
-      event.preventDefault();
-      event.dataTransfer.dropEffect = 'move';
+  handleDrop(event) {
+    event.preventDefault();
+    const mouseX = event.clientX;
+    const mouseY = event.clientY;
+    const targetCell = this.getTargetCell();
+    if (!targetCell) {
+      console.log("targetCell not found. " + targetCell);
+      return;
+    }
+    if (!targetCell) {
+      console.log("Drop outside truck bounds.");
+      return;
+    }
+
+    const tetrominoId = event.dataTransfer.getData('text/plain');
+    const tetrominoElement = document.getElementById(tetrominoId);
+    if (!tetrominoElement) {
+      console.log("Tetromino not found.");
+      return;
+    }
+
+    const focusedCellIndex = parseInt(tetrominoElement.dataset.childFocusIndex);
+    const tetrominoData = JSON.parse(tetrominoElement.dataset.object);
+    const origin = this.calculateTetrominoOrigin(targetCell, focusedCellIndex, tetrominoData);
+
+    if (!this.isValidPlacement(origin, tetrominoData)) {
+      console.log("Invalid placement.");
+      return;
+    }
+
+    this.placeTetromino(origin, tetrominoData, tetrominoElement);
+    console.log("Tetromino placed successfully.");
+  }
+
+  getTargetCell() {
+    const x = this.mouseCoord.x;
+    const y = this.mouseCoord.y;
+
+    return this.container.querySelector(`.truck-block[data-x="${x}"][data-y="${y}"]`);
+
+  }
+
+
+
+
+
+  calculateTetrominoOrigin(targetCell, focusedCellIndex, tetrominoData) {
+    const targetX = parseInt(targetCell.dataset.x);
+    const targetY = parseInt(targetCell.dataset.y);
+
+    // Assuming each row in `shape` has the same number of columns (tetrominoData.shape[0].length)
+    const tetrominoWidth = tetrominoData.shape[0].length;
+    const offsetX = focusedCellIndex % tetrominoWidth;  // Column index of the focused cell
+    const offsetY = Math.floor(focusedCellIndex / tetrominoWidth);  // Row index of the focused cell
+
+    return { x: targetX - offsetX, y: targetY - offsetY };
+  }
+
+
+  isValidPlacement(origin, tetrominoData) {
+    for (let y = 0; y < tetrominoData.shape.length; y++) {
+      for (let x = 0; x < tetrominoData.shape[y].length; x++) {
+        if (tetrominoData.shape[y][x] === 1) {
+          const checkX = origin.x + x;
+          const checkY = origin.y + y;
+          if (checkX < 0 || checkX >= this.width || checkY < 0 || checkY >= this.length) {
+            return false; // Out of bounds
+          }
+          if (this.grid[checkY][checkX].filled) {
+            return false; // Cell already filled
+          }
+        }
+      }
+    }
+    return true;
+  }
+
+
+
+  placeTetromino(origin, tetrominoData, tetrominoElement) {
+    tetrominoData.shape.forEach((row, y) => {
+      row.forEach((cell, x) => {
+        if (cell === 1) {
+          const finalX = origin.x + x;
+          const finalY = origin.y + y;
+          const gridCell = this.container.querySelector(`.truck-block[data-x="${finalX}"][data-y="${finalY}"]`);
+          gridCell.style.backgroundColor = tetrominoData.color; // Color the grid cell
+          gridCell.dataset.filled = 'true'; // Mark the cell as filled in the dataset
+          this.grid[finalY][finalX].filled = true; // Mark the grid model as filled
+        }
+      });
     });
 
-    this.container.addEventListener('drop', (event) => {
-      event.preventDefault();
-      const tetrominoId = event.dataTransfer.getData('text/plain');
-      const tetrominoElement = document.getElementById(tetrominoId);
-      if (tetrominoElement) {
-        this.container.appendChild(tetrominoElement);
-        tetrominoElement.style.position = 'static';
-      }
-    });
+
+    this.blocks.push(tetrominoElement); // Add the tetromino element to the list of blocks
+    tetrominoElement.remove(); // Remove the element from its temporary position
   }
+
+
 }

@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
             tetrominoElement.style.transform = `translateX(${startPosition}px)`;
 
             const move = () => {
-                let newPosition = startPosition += 1.75;
+                let newPosition = startPosition += 0.30;
                 tetrominoElement.style.transform = `translateX(${newPosition}px)`;
 
                 if (newPosition > conveyorBelt.offsetWidth) {

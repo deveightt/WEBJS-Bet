@@ -34,7 +34,7 @@
                 <option value="snelkoerier">Snelkoerier</option>
             </select>
         </div>
-        <button type="submit">Maak Vrachtwagen</button>
+        <button id="submitForm" type="submit">Maak Vrachtwagen</button>
     </form>
 
     <div class="extraFields">
@@ -47,24 +47,41 @@
     <div id="weatherResult"></div>
     <div id="apiResponseContainer"></div>
 
-    <div id="conveyorBelt">Conveyor Belt Area</div>
+    <div id="conveyorBelt" class="unselectable">Conveyor Belt Area</div>
 
-    <div id="truckContainer" class="truck-container">Truck Container</div>
+    <div id="truckContainer" class="truck-container unselectable">Truck Container</div>
 
     <script src="backend/models/Truck.js"></script>
     <script src="backend/controllers/TruckController.js"></script>
     <script type="module" src="script.js"></script>
-    <div id="coords">X: -, Y: -</div>
+    <div id="coords" class="unselectable">X: -, Y: -</div>
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
             const coordsDiv = document.getElementById('coords');
 
-            document.addEventListener('mousemove', (event) => {
+            document.addEventListener('dragover', (event) => {
                 const x = event.clientX;
                 const y = event.clientY;
                 coordsDiv.textContent = `X: ${x}, Y: ${y}`;
             });
+
+            function mimicUserAction() {
+                setTimeout(() => {
+                    document.getElementById('length').value = 10;
+                    document.getElementById('width').value = 10;
+                    setTimeout(() => {
+                        document.getElementById('interval').value = 34;
+                        setTimeout(() => {
+                            document.getElementById('type').value = 'koud'; // Default selection
+                            document.getElementById('truckForm').querySelector('button[type="submit"]').click();
+                        }, 10); // Mimicking user selecting the dropdown
+                    }, 10); // Mimicking user filling the interval
+                }, 10); // Mimicking user filling the dimensions
+            }
+
+            window.onload = mimicUserAction;
         });
+
     </script>
 </body>
 
