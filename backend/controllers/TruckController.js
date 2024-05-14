@@ -24,12 +24,29 @@ class TruckManager {
   }
 
   addTruck(truck) {
-    this.trucks.push(truck);
-    this.renderTruck(truck);
+    const interval = parseInt(document.getElementById('interval').value, 10);
+    console.log(`Interval: ${interval}`); // Debug: Log interval value
+
+    setTimeout(() => {
+        this.trucks.push(truck);
+        this.renderTruck(truck);
+    }, interval * 1000);
   }
 
   renderTruck(truck) {
     const truckElement = truck.createTruckElement();
+    const sendButton = document.createElement('button');
+    sendButton.innerText = 'Verstuur';
+    sendButton.addEventListener('click', () => this.sendTruck(truck, truckElement));
+    truckElement.appendChild(sendButton);
     this.trucksContainer.appendChild(truckElement);
+  }
+
+  sendTruck(truck, truckElement){
+    truckElement.style.animation = 'slideOutToBottom 2s ease-out';
+    setTimeout(() => {
+      this.trucks = this.trucks.filter(t => t !== truck);
+      truckElement.remove();
+    }, 2000);
   }
 }

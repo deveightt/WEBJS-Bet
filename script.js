@@ -24,11 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     // Allow the truck container to receive drop events
 
-
-
-
-
-
     document.getElementById('checkWeatherBtn').addEventListener('click', () => {
         const city = document.getElementById('locationInput').value;
         weatherController.fetchWeatherData(city)
@@ -50,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
             tetrominoElement.style.transform = `translateX(${startPosition}px)`;
 
             const move = () => {
-                let newPosition = startPosition += 0.30;
+                let newPosition = startPosition += 0.60;
                 tetrominoElement.style.transform = `translateX(${newPosition}px)`;
 
                 if (newPosition > conveyorBelt.offsetWidth) {

@@ -16,6 +16,7 @@ class Truck {
   createTruckElement() {
     const truckWrapper = document.createElement('div');
     truckWrapper.classList.add('truck-wrapper');
+    truckWrapper.style.animation = 'slideInFromBottom 2s ease-out';
 
     const label = document.createElement('div');
     label.textContent = `${this.type} - ${this.length}x${this.width}`;

@@ -43,8 +43,8 @@ button {
     height: 100%;
     background-size: 50px 70px;
     /* Grootte van de individuele driehoek en loopbandhoogte */
-    background-image: repeating-linear-gradient(-45deg, transparent, transparent 24px, rgb(61, 60, 60) 25px, rgb(94, 93, 93) 50px);
-    animation: conveyorBeltAnimation 10s linear infinite;
+    background-image: repeating-linear-gradient(-45deg, transparent, transparent 25px, rgb(60, 60, 60) 25px, rgb(94, 93, 93) 50px);
+    animation: conveyorBeltAnimation 15s linear infinite;
 }
 
 @keyframes conveyorBeltAnimation {
@@ -59,7 +59,29 @@ button {
     }
 }
 
-#truckContainer {
+/* 
+    Truck Styling
+*/
+
+@keyframes slideInFromBottom {
+    0% {
+      transform: translateY(100%);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideOutToBottom {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(100%);
+    }
+  }
+  
+  #truckContainer {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
@@ -70,8 +92,9 @@ button {
 .truck {
     display: grid;
     gap: 2px;
+    animation: slideInFromBottom 2s ease-out;
+    animation: slideOutToBottom 2s ease-out;
 }
-
 .truck .label {
     grid-column: 1 / -1;
     text-align: center;
