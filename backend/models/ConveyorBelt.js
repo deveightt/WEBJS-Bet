@@ -94,8 +94,10 @@ class ConveyorBelt {
             tetrominoElement.style.transform = `translateX(${newPosition}px)`;
 
             if (newPosition > this.container.offsetWidth) {
-                this.container.removeChild(tetrominoElement);
-                this.tetrominoElements = this.tetrominoElements.filter(elem => elem.element !== tetrominoElement);
+                if (this.container.contains(tetrominoElement)) {
+                    this.container.removeChild(tetrominoElement);
+                    this.tetrominoElements = this.tetrominoElements.filter(elem => elem.element !== tetrominoElement);
+                }
             } else {
                 requestAnimationFrame(() => this.animateTetromino(tetrominoElement, newPosition));
             }

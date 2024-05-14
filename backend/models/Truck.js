@@ -84,7 +84,6 @@ class Truck {
     }
 
     this.placeTetromino(origin, tetrominoData, tetrominoElement);
-    console.log("Tetromino placed successfully.");
   }
 
   getTargetCell() {

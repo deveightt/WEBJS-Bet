@@ -9,7 +9,6 @@ export function initializeForm() {
     const maxLength = parseInt(document.getElementById('length').max);
     const maxWidth = parseInt(document.getElementById('width').max);
     let currentStep = 0;
-    console.log(currentStep);
 
     nextBtns.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -17,7 +16,6 @@ export function initializeForm() {
                 steps[currentStep].classList.remove('form-step-active');
                 currentStep++;
                 steps[currentStep].classList.add('form-step-active');
-                console.log(currentStep);
 
                 focusOnNextInput(currentStep);
             }
