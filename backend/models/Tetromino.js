@@ -34,7 +34,7 @@ class Tetromino {
         });
     }
 
-    draw(container) {
+    draw() {
         const tetrominoElement = document.createElement('div');
         tetrominoElement.style.display = 'grid';
         tetrominoElement.style.position = 'absolute';
@@ -58,7 +58,7 @@ class Tetromino {
 
         tetrominoElement.id = `tetromino-${Math.random().toString(36).substr(2, 9)}`;
         this.enableDragDrop(tetrominoElement);
-        container.appendChild(tetrominoElement);
+
         this.element = tetrominoElement;
         return tetrominoElement;
     }

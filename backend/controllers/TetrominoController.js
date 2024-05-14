@@ -1,4 +1,4 @@
-import Tetromino from '/backend/models/Tetromino.js';
+import Tetromino from '../models/Tetromino.js';
 
 class TetrominoController {
     constructor() {
@@ -9,7 +9,7 @@ class TetrominoController {
             'S': { shape: [[0, 1, 1], [1, 1, 0]], color: "green" },
             'Z': { shape: [[1, 1, 0], [0, 1, 1]], color: "red" },
             'J': { shape: [[1, 0, 0], [1, 1, 1]], color: "blue" },
-            'L': { shape: [[0, 0, 1], [1, 1, 1]], color: "orange"}
+            'L': { shape: [[0, 0, 1], [1, 1, 1]], color: "orange" }
         };
     }
 
@@ -20,9 +20,9 @@ class TetrominoController {
         return new Tetromino(shape, color);
     }
 
-    drawRandomTetromino(container) {
+    drawRandomTetromino() {
         const tetromino = this.generateRandomTetromino();
-        return tetromino.draw(container);
+        return tetromino.draw();
     }
 }
 

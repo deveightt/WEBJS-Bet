@@ -1,4 +1,6 @@
-class TruckManager {
+import Truck from '../models/Truck.js';
+
+class TruckController {
   constructor() {
     this.trucks = [];
     this.trucksContainer = document.getElementById('truckContainer') || document.createElement('div');
@@ -8,45 +10,69 @@ class TruckManager {
   }
 
   attachFormSubmitEvent() {
-    document.getElementById('truckForm').addEventListener('submit', (e) => {
+    const form = document.getElementById('truckForm');
+    form.addEventListener('submit', (e) => {
       e.preventDefault();
 
-      const length = parseInt(document.getElementById('length').value, 10);
-      const width = parseInt(document.getElementById('width').value, 10);
-      const type = document.getElementById('type').value;
+      const truckLength = parseInt(document.getElementById('length').value, 10);
+      const truckWidth = parseInt(document.getElementById('width').value, 10);
+      const minAllowedLength = parseInt(document.getElementById('length').min);
+      const minAllowedWidth = parseInt(document.getElementById('width').min);
+      const maxAllowedLength = parseInt(document.getElementById('length').max);
+      const maxAllowedWidth = parseInt(document.getElementById('width').max);
+      const truckType = document.getElementById('type').value;
 
-      if (length <= 10 && width <= 10) {
-        this.addTruck(new Truck(length, width, type));
+      if (isLengthValid(truckLength, minAllowedLength, maxAllowedLength) &&
+        isWidthValid(truckWidth, minAllowedWidth, maxAllowedWidth)) {
+        this.addTruck(new Truck(truckLength, truckWidth, truckType));
       } else {
-        alert('Lengte en breedte mogen maximaal 10 zijn.');
+        if (!isLengthValid(truckLength, minAllowedLength, maxAllowedLength)) {
+          alert(`Length should be between ${minAllowedLength} and ${maxAllowedLength}.`);
+        }
+        if (!isWidthValid(truckWidth, minAllowedWidth, maxAllowedWidth)) {
+          alert(`Width should be between ${minAllowedWidth} and ${maxAllowedWidth}.`);
+        }
       }
     });
+
+    function isLengthValid(length, minLength, maxLength) {
+      return length >= minLength && length <= maxLength;
+    }
+
+    function isWidthValid(width, minWidth, maxWidth) {
+      return width >= minWidth && width <= maxWidth;
+    }
   }
+
+
 
   addTruck(truck) {
     const interval = parseInt(document.getElementById('interval').value, 10);
     console.log(`Interval: ${interval}`); // Debug: Log interval value
 
     setTimeout(() => {
-        this.trucks.push(truck);
-        this.renderTruck(truck);
+      this.trucks.push(truck);
+      this.renderTruck(truck);
     }, interval * 1000);
   }
 
   renderTruck(truck) {
     const truckElement = truck.createTruckElement();
     const sendButton = document.createElement('button');
-    sendButton.innerText = 'Verstuur';
+    sendButton.innerText = 'Send';
     sendButton.addEventListener('click', () => this.sendTruck(truck, truckElement));
     truckElement.appendChild(sendButton);
     this.trucksContainer.appendChild(truckElement);
   }
 
-  sendTruck(truck, truckElement){
-    truckElement.style.animation = 'slideOutToBottom 2s ease-out';
+  sendTruck(truck, truckElement) {
+    truckElement.classList.add('depart');
+
     setTimeout(() => {
       this.trucks = this.trucks.filter(t => t !== truck);
       truckElement.remove();
     }, 2000);
   }
 }
+
+export default TruckController;

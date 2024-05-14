@@ -15,8 +15,7 @@ class Truck {
 
   createTruckElement() {
     const truckWrapper = document.createElement('div');
-    truckWrapper.classList.add('truck-wrapper');
-    truckWrapper.style.animation = 'slideInFromBottom 2s ease-out';
+    truckWrapper.classList.add('truck-wrapper'); // Apply animation only to the wrapper
 
     const label = document.createElement('div');
     label.textContent = `${this.type} - ${this.length}x${this.width}`;
@@ -41,11 +40,10 @@ class Truck {
       block.dataset.y = Math.floor(i / this.width);
       block.dataset.filled = false;
       block.addEventListener('dragover', event => {
-        event.preventDefault()
+        event.preventDefault();
         this.mouseCoord.x = block.dataset.x;
         this.mouseCoord.y = block.dataset.y;
-      }
-      );
+      });
       truck.appendChild(block);
     }
 
@@ -152,6 +150,6 @@ class Truck {
     this.blocks.push(tetrominoElement); // Add the tetromino element to the list of blocks
     tetrominoElement.remove(); // Remove the element from its temporary position
   }
-
-
 }
+
+export default Truck;

@@ -31,7 +31,19 @@ class WeatherController {
 
         return transportRestrictions;
     }
+
+    setupWeatherCheckButton() {
+        document.getElementById('checkWeatherBtn').addEventListener('click', () => {
+            const city = document.getElementById('locationInput').value;
+            this.fetchWeatherData(city)
+                .then(restrictions => this.displayRestrictions(restrictions));
+        });
+    }
+
+    displayRestrictions(restrictions) {
+        const resultDiv = document.getElementById('weatherResult');
+        resultDiv.innerHTML = restrictions.join('<br>');
+    }
 }
 
 export default WeatherController;
-
