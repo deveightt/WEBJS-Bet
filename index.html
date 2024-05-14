@@ -12,30 +12,45 @@
     <button id="bgbutton">stop
     </button>
     <form id="truckForm">
-        <div class="form-group">
-            <label for="length">Lengte (max 10):</label>
-            <input type="number" id="length" name="length" max="10" required>
+        <div class="form-step form-step-active">
+            <div class="form-group">
+                <label for="length">Lengte (max 10):</label>
+                <input type="number" id="length" name="length" max="10" required>
+            </div>
+            <button type="button" class="next-btn">Next</button>
         </div>
-        <div class="form-group">
-            <label for="width">Breedte (max 10):</label>
-            <input type="number" id="width" name="width" max="10" required>
+        <div class="form-step">
+            <div class="form-group">
+                <label for="width">Breedte (max 10):</label>
+                <input type="number" id="width" name="width" max="10" required>
+            </div>
+            <button type="button" class="prev-btn">Previous</button>
+            <button type="button" class="next-btn">Next</button>
         </div>
-        <div class="form-group">
-            <label for="interval">Aankomst interval (seconden):</label>
-            <input type="number" id="interval" name="interval" required>
+        <div class="form-step">
+            <div class="form-group">
+                <label for="interval">Aankomst interval (seconden):</label>
+                <input type="number" id="interval" name="interval" required>
+            </div>
+            <button type="button" class="prev-btn">Previous</button>
+            <button type="button" class="next-btn">Next</button>
         </div>
-        <div class="form-group">
-            <label for="type">Type:</label>
-            <select id="type" name="type" required>
-                <option value="koud">Koud transport</option>
-                <option value="breekbaar">Breekbaar transport</option>
-                <option value="algemeen">Algemeen transport</option>
-                <option value="pallets">Pallets</option>
-                <option value="snelkoerier">Snelkoerier</option>
-            </select>
+        <div class="form-step">
+            <div class="form-group">
+                <label for="type">Type:</label>
+                <select id="type" name="type" required>
+                    <option value="koud">Koud transport</option>
+                    <option value="breekbaar">Breekbaar transport</option>
+                    <option value="algemeen">Algemeen transport</option>
+                    <option value="pallets">Pallets</option>
+                    <option value="snelkoerier">Snelkoerier</option>
+                </select>
+            </div>
+            <button type="button" class="prev-btn">Previous</button>
+            <button type="submit" id="submitForm">Maak Vrachtwagen</button>
         </div>
-        <button id="submitForm" type="submit">Maak Vrachtwagen</button>
     </form>
+    <script src="backend\models\form.js"></script>
 
     <div class="extraFields">
         <label for="locationInput">Locatie voor Weercheck:</label>

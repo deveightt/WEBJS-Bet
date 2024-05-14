@@ -103,3 +103,12 @@ button {
     -ms-user-select: none;
     user-select: none;
 }
+
+
+.form-step {
+    display: none;
+}
+
+.form-step-active {
+    display: block;
+}
