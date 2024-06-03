@@ -16,8 +16,8 @@ export default class HallController {
     initialize() {
         const tetrominoController = new TetrominoController(this.hallElement);
         this.weatherController = new WeatherController(this.weatherApiKey, this.hallElement);
-        const truckController = new TruckController(this.hallElement, this.weatherController);
         this.conveyorBeltController = new ConveyorBeltController(tetrominoController, this.hallElement);
+        const truckController = new TruckController(this.hallElement, this.weatherController);
 
         this.weatherController.setupWeatherCheckButton(this.hallElement.querySelector('.checkWeatherBtn'));
 
