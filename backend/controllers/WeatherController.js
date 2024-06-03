@@ -1,6 +1,8 @@
 class WeatherController {
-    constructor(apiKey) {
+    constructor(apiKey, container) {
         this.apiKey = apiKey;
+        this.container = container;
+        this.currentRestrictions = [];
     }
 
     fetchWeatherData(city) {
@@ -14,35 +16,52 @@ class WeatherController {
 
     processWeatherData(weatherData) {
         const condition = weatherData.samenv.toLowerCase(); // Korte samenvatting van het weer
+
         const temp = parseFloat(weatherData.temp); // Temperatuur
         const windkracht = parseInt(weatherData.windk, 10); // Windsnelheid
 
-        let transportRestrictions = [];
+        this.currentRestrictions = [];
 
         if (condition.includes("regen") || condition.includes("sneeuw")) {
-            transportRestrictions.push("Breekbaar Transport rijdt niet");
+            this.currentRestrictions.push("breekbaar");
         }
         if (temp > 35) {
-            transportRestrictions.push("Koud Transport rijdt niet");
+            this.currentRestrictions.push("koud");
         }
         if (windkracht > 7) { // Gebruik de Beaufort-schaal voor windkracht
-            transportRestrictions.push("Palletvrachtwagen rijdt niet");
+            this.currentRestrictions.push("pallets");
         }
 
-        return transportRestrictions;
+        return this.currentRestrictions;
     }
 
-    setupWeatherCheckButton() {
-        document.getElementById('checkWeatherBtn').addEventListener('click', () => {
-            const city = document.getElementById('locationInput').value;
+    setupWeatherCheckButton(buttonElement) {
+        buttonElement.addEventListener('click', () => {
+            const city = this.container.querySelector('.locationInput').value;
+            console.log(city);
+
             this.fetchWeatherData(city)
                 .then(restrictions => this.displayRestrictions(restrictions));
         });
     }
 
     displayRestrictions(restrictions) {
-        const resultDiv = document.getElementById('weatherResult');
-        resultDiv.innerHTML = restrictions.join('<br>');
+        const resultDiv = this.container.querySelector('.weatherResult');
+        resultDiv.innerHTML = restrictions.map(restriction => {
+            if (restriction === "breekbaar") {
+                return "Breekbaar Transport rijdt niet";
+            } else if (restriction === "koud") {
+                return "Koud Transport rijdt niet";
+            } else if (restriction === "pallets") {
+                return "Palletvrachtwagen rijdt niet";
+            } else {
+                return "Alle vrachtwagens rijden";
+            }
+        }).join('<br>');
+    }
+
+    canSendTruck(truckType) {
+        return !this.currentRestrictions.includes(truckType);
     }
 }
 

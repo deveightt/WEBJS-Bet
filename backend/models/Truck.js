@@ -1,10 +1,11 @@
 class Truck {
-  constructor(length, width, type) {
+  constructor(length, width, type, container) {
     this.length = length;
     this.width = width;
     this.type = type;
     this.grid = this.initializeGrid(length, width);
-    this.container = null;
+    this.container = container;
+    this.truckContainer = null;
     this.blocks = [];
     this.mouseCoord = { x: 0, y: 0 };
   }
@@ -49,7 +50,7 @@ class Truck {
 
     truck.addEventListener('drop', this.handleDrop.bind(this));
     truckWrapper.appendChild(truck);
-    this.container = truckWrapper;
+    this.truckContainer = truckWrapper;
     return truckWrapper;
   }
 
@@ -68,7 +69,7 @@ class Truck {
     }
 
     const tetrominoId = event.dataTransfer.getData('text/plain');
-    const tetrominoElement = document.getElementById(tetrominoId);
+    const tetrominoElement = this.container.querySelector(`#${tetrominoId}`);
     if (!tetrominoElement) {
       console.log("Tetromino not found.");
       return;
@@ -90,13 +91,8 @@ class Truck {
     const x = this.mouseCoord.x;
     const y = this.mouseCoord.y;
 
-    return this.container.querySelector(`.truck-block[data-x="${x}"][data-y="${y}"]`);
-
+    return this.truckContainer.querySelector(`.truck-block[data-x="${x}"][data-y="${y}"]`);
   }
-
-
-
-
 
   calculateTetrominoOrigin(targetCell, focusedCellIndex, tetrominoData) {
     const targetX = parseInt(targetCell.dataset.x);
@@ -109,7 +105,6 @@ class Truck {
 
     return { x: targetX - offsetX, y: targetY - offsetY };
   }
-
 
   isValidPlacement(origin, tetrominoData) {
     for (let y = 0; y < tetrominoData.shape.length; y++) {
@@ -129,22 +124,19 @@ class Truck {
     return true;
   }
 
-
-
   placeTetromino(origin, tetrominoData, tetrominoElement) {
     tetrominoData.shape.forEach((row, y) => {
       row.forEach((cell, x) => {
         if (cell === 1) {
           const finalX = origin.x + x;
           const finalY = origin.y + y;
-          const gridCell = this.container.querySelector(`.truck-block[data-x="${finalX}"][data-y="${finalY}"]`);
+          const gridCell = this.truckContainer.querySelector(`.truck-block[data-x="${finalX}"][data-y="${finalY}"]`);
           gridCell.style.backgroundColor = tetrominoData.color; // Color the grid cell
           gridCell.dataset.filled = 'true'; // Mark the cell as filled in the dataset
           this.grid[finalY][finalX].filled = true; // Mark the grid model as filled
         }
       });
     });
-
 
     this.blocks.push(tetrominoElement); // Add the tetromino element to the list of blocks
     tetrominoElement.remove(); // Remove the element from its temporary position

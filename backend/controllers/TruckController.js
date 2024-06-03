@@ -1,30 +1,32 @@
 import Truck from '../models/Truck.js';
 
 class TruckController {
-  constructor() {
+  constructor(container, weatherController) {
     this.trucks = [];
-    this.trucksContainer = document.getElementById('truckContainer') || document.createElement('div');
-    this.trucksContainer.id = 'truckContainer';
-    document.body.appendChild(this.trucksContainer);
+    this.container = container;
+    this.weatherController = weatherController;
+    this.trucksContainer = this.container.querySelector('.truckContainer') || document.createElement('div');
+    this.trucksContainer.classList.add('truckContainer');
+    this.container.appendChild(this.trucksContainer);
     this.attachFormSubmitEvent();
   }
 
   attachFormSubmitEvent() {
-    const form = document.getElementById('truckForm');
+    const form = this.container.querySelector('form');
     form.addEventListener('submit', (e) => {
       e.preventDefault();
 
-      const truckLength = parseInt(document.getElementById('length').value, 10);
-      const truckWidth = parseInt(document.getElementById('width').value, 10);
-      const minAllowedLength = parseInt(document.getElementById('length').min);
-      const minAllowedWidth = parseInt(document.getElementById('width').min);
-      const maxAllowedLength = parseInt(document.getElementById('length').max);
-      const maxAllowedWidth = parseInt(document.getElementById('width').max);
-      const truckType = document.getElementById('type').value;
+      const truckLength = parseInt(this.container.querySelector('.length').value, 10);
+      const truckWidth = parseInt(this.container.querySelector('.width').value, 10);
+      const minAllowedLength = parseInt(this.container.querySelector('.length').min);
+      const minAllowedWidth = parseInt(this.container.querySelector('.width').min);
+      const maxAllowedLength = parseInt(this.container.querySelector('.length').max);
+      const maxAllowedWidth = parseInt(this.container.querySelector('.width').max);
+      const truckType = this.container.querySelector('.type').value;
 
       if (isLengthValid(truckLength, minAllowedLength, maxAllowedLength) &&
         isWidthValid(truckWidth, minAllowedWidth, maxAllowedWidth)) {
-        this.addTruck(new Truck(truckLength, truckWidth, truckType));
+        this.addTruck(new Truck(truckLength, truckWidth, truckType, this.container));
       } else {
         if (!isLengthValid(truckLength, minAllowedLength, maxAllowedLength)) {
           alert(`Length should be between ${minAllowedLength} and ${maxAllowedLength}.`);
@@ -44,10 +46,8 @@ class TruckController {
     }
   }
 
-
-
   addTruck(truck) {
-    const interval = parseInt(document.getElementById('interval').value, 10);
+    const interval = parseInt(this.container.querySelector('.interval').value, 10);
     console.log(`Interval: ${interval}`); // Debug: Log interval value
 
     setTimeout(() => {
@@ -60,7 +60,13 @@ class TruckController {
     const truckElement = truck.createTruckElement();
     const sendButton = document.createElement('button');
     sendButton.innerText = 'Send';
-    sendButton.addEventListener('click', () => this.sendTruck(truck, truckElement));
+    sendButton.addEventListener('click', () => {
+      if (this.weatherController.canSendTruck(truck.type)) {
+        this.sendTruck(truck, truckElement);
+      } else {
+        alert(`The ${truck.type} cannot be sent due to current weather conditions.`);
+      }
+    });
     truckElement.appendChild(sendButton);
     this.trucksContainer.appendChild(truckElement);
   }

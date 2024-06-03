@@ -1,13 +1,16 @@
-// backend/scripts/form.js
-export function initializeForm() {
-    const steps = Array.from(document.querySelectorAll('.form-step'));
-    const nextBtns = document.querySelectorAll('.next-btn');
-    const prevBtns = document.querySelectorAll('.prev-btn');
-    const form = document.getElementById('truckForm');
-    const minLength = parseInt(document.getElementById('length').min);
-    const minWidth = parseInt(document.getElementById('width').min);
-    const maxLength = parseInt(document.getElementById('length').max);
-    const maxWidth = parseInt(document.getElementById('width').max);
+export function initializeForm(container) {
+    const steps = Array.from(container.querySelectorAll('.form-step'));
+    const nextBtns = container.querySelectorAll('.next-btn');
+    const prevBtns = container.querySelectorAll('.prev-btn');
+    const form = container.querySelector('form');
+    const lengthInput = container.querySelector('.length');
+    const widthInput = container.querySelector('.width');
+    const intervalInput = container.querySelector('.interval');
+    const submitBtn = container.querySelector('.submitForm');
+    const minLength = parseInt(lengthInput.min);
+    const minWidth = parseInt(widthInput.min);
+    const maxLength = parseInt(lengthInput.max);
+    const maxWidth = parseInt(widthInput.max);
     let currentStep = 0;
 
     nextBtns.forEach(btn => {
@@ -37,69 +40,79 @@ export function initializeForm() {
         }
     });
 
+    form.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            if (currentStep < steps.length - 1) {
+                nextBtns[currentStep].click();
+            } else if (currentStep === steps.length - 1) {
+                submitBtn.click();
+            }
+        }
+    });
+
     function validateStep(step, minLength, maxLength, minWidth, maxWidth) {
-        const length = parseInt(document.getElementById('length').value, 10);
-        const width = parseInt(document.getElementById('width').value, 10);
-        const interval = parseInt(document.getElementById('interval').value, 10);
+        const length = parseInt(lengthInput.value, 10);
+        const width = parseInt(widthInput.value, 10);
+        const interval = parseInt(intervalInput.value, 10);
         clearErrors();
 
         if (step === 0 && (isNaN(length) || length > maxLength || length < minLength)) {
-            showError('length', `Length should be between ${minLength} and ${maxLength}.`);
+            showError(lengthInput, `Length should be between ${minLength} and ${maxLength}.`);
             return false;
         } else if (step === 1 && (isNaN(width) || width > maxWidth || width < minWidth)) {
-            showError('width', `Width should be between ${minWidth} and ${maxWidth}.`);
+            showError(widthInput, `Width should be between ${minWidth} and ${maxWidth}.`);
             return false;
         } else if (step === 2 && (isNaN(interval) || interval < 0)) {
-            showError('interval', 'Interval should be a non-negative number.');
+            showError(intervalInput, 'Interval should be a non-negative number.');
             return false;
         }
         return true;
     }
 
     function validateForm(minLength, maxLength, minWidth, maxWidth) {
-        const length = parseInt(document.getElementById('length').value, 10);
-        const width = parseInt(document.getElementById('width').value, 10);
-        const interval = parseInt(document.getElementById('interval').value, 10);
+        const length = parseInt(lengthInput.value, 10);
+        const width = parseInt(widthInput.value, 10);
+        const interval = parseInt(intervalInput.value, 10);
         clearErrors();
 
         if (isNaN(length) || length > maxLength || length < minLength) {
-            showError('length', `Length should be between ${minLength} and ${maxLength}.`);
+            showError(lengthInput, `Length should be between ${minLength} and ${maxLength}.`);
             return false;
         }
         if (isNaN(width) || width > maxWidth || width < minWidth) {
-            showError('width', `Width should be between ${minWidth} and ${maxWidth}.`);
+            showError(widthInput, `Width should be between ${minWidth} and ${maxWidth}.`);
             return false;
         }
         if (isNaN(interval) || interval < 0) {
-            showError('interval', 'Interval should be a non-negative number.');
+            showError(intervalInput, 'Interval should be a non-negative number.');
             return false;
         }
         return true;
     }
 
-    function showError(fieldId, message) {
-        let errorElement = document.getElementById(`${fieldId}-error`);
+    function showError(inputElement, message) {
+        let errorElement = container.querySelector(`.${inputElement.className}-error`);
         if (!errorElement) {
             errorElement = document.createElement('div');
-            errorElement.id = `${fieldId}-error`;
-            errorElement.className = 'error-message';
-            document.getElementById(fieldId).parentNode.appendChild(errorElement);
+            errorElement.className = `${inputElement.className}-error error-message`;
+            inputElement.parentNode.appendChild(errorElement);
         }
         errorElement.textContent = message;
     }
 
     function clearErrors() {
-        const errors = document.querySelectorAll('.error-message');
+        const errors = container.querySelectorAll('.error-message');
         errors.forEach(error => error.textContent = '');
     }
 
     function focusOnNextInput(step) {
         if (step === 1) {
-            document.getElementById('width').focus();
+            widthInput.focus();
         } else if (step === 2) {
-            document.getElementById('interval').focus();
+            intervalInput.focus();
         } else if (step === 3) {
-            document.getElementById('type').focus();
+            container.querySelector('.type').focus();
         }
     }
 }

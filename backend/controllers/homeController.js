@@ -1,23 +1,39 @@
-// HomeController.js
-import TetrominoController from './TetrominoController.js';
-import WeatherController from './WeatherController.js';
-import TruckController from './TruckController.js';
-import ConveyorBeltController from './ConveyorBeltController.js';
-import { initializeForm } from '../scripts/form.js';
+import HallController from './HallController.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-    initializeForm();
-    const tetrominoController = new TetrominoController();
-    const weatherController = new WeatherController('beeecd8942');
-    const truckController = new TruckController();
-    const conveyorBeltController = new ConveyorBeltController(tetrominoController, document.getElementById('conveyor-belt-container'));
+    const loadHallsContainer = document.getElementById('load-halls-container');
+    const hallTemplate = document.getElementById('hall-template').content;
+    const hallSwitch = document.getElementById('hallSwitch');
 
-    weatherController.setupWeatherCheckButton();
+    const numberOfHalls = 2;
+    const weatherApiKey = 'beeecd8942';
+    const hallControllers = [];
 
-    document.getElementById('tst-toggle').addEventListener('click', () => {
-        conveyorBeltController.belts.forEach(belt => {
-            belt.toggleBelt();
+    for (let i = 1; i <= numberOfHalls; i++) {
+        const hallClone = document.importNode(hallTemplate, true);
+        loadHallsContainer.appendChild(hallClone);
+        const hallElement = loadHallsContainer.lastElementChild;
+
+        hallElement.id = `hall-${i}`;
+        hallElement.style.display = i === 1 ? 'block' : 'none';
+
+        const hallController = new HallController(hallElement, weatherApiKey);
+        hallControllers.push(hallController);
+    }
+
+    hallSwitch.addEventListener('change', (event) => {
+        const selectedHall = event.target.value;
+        hallControllers.forEach((controller, index) => {
+            const hallElement = document.getElementById(`hall-${index + 1}`);
+            if (selectedHall == index + 1) {
+                hallElement.style.display = 'block';
+                // Resume the conveyor belts if they were paused
+                controller.resumeConveyorBelts();
+            } else {
+                hallElement.style.display = 'none';
+                // Pause the conveyor belts
+                controller.pauseConveyorBelts();
+            }
         });
     });
-
 });
