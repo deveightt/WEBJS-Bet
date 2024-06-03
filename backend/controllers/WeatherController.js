@@ -25,7 +25,7 @@ class WeatherController {
         if (temp > 35) {
             transportRestrictions.push("Koud Transport rijdt niet");
         }
-        if (windkracht > 7) { // Gebruik de Beaufort-schaal voor windkracht
+        if (windkracht > 7) { 
             transportRestrictions.push("Palletvrachtwagen rijdt niet");
         }
 

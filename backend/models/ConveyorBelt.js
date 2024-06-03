@@ -56,15 +56,9 @@ class ConveyorBelt {
         if (this.container) {
             const animation = this.container.querySelector('div');
             if (animation.style.animationPlayState === 'paused') {
-                animation.style.animationPlayState = 'running';
-                this.isPaused = false;
-                this.tetrominoElements.forEach(({ element }) => this.resumeTetromino(element)); // Resume tetromino movement
-                this.startTetrominoAnimation();
+                this.startBelt();
             } else {
-                animation.style.animationPlayState = 'paused';
-                this.isPaused = true;
-                clearInterval(this.intervalId);
-                this.intervalId = null;
+                this.pauseBelt();
             }
         }
     }
@@ -111,6 +105,22 @@ class ConveyorBelt {
         if (elem) {
             this.animateTetromino(tetrominoElement, parseFloat(tetrominoElement.style.transform.replace('translateX(', '').replace('px)', '')));
         }
+    }
+
+    startBelt() {
+        this.isPaused = false;
+        const animation = this.container.querySelector('div');
+        animation.style.animationPlayState = 'running';
+        this.startTetrominoAnimation();
+        this.tetrominoElements.forEach(({ element }) => this.resumeTetromino(element));
+    }
+
+    pauseBelt() {
+        this.isPaused = true;
+        const animation = this.container.querySelector('div');
+        animation.style.animationPlayState = 'paused';
+        clearInterval(this.intervalId);
+        this.intervalId = null;
     }
 }
 

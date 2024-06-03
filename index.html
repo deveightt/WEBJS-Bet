@@ -9,87 +9,127 @@
 </head>
 
 <body>
-    <form id="truckForm">
-        <div class="form-step form-step-active">
-            <div class="form-group">
-                <label for="length">Lengte (max 10):</label>
-                <input type="number" id="length" name="length" min="2" max="10" required>
+    <button id="switchHallsBtn">Switch Halls</button>
+    <div id="laadhal1" class="laadhal">
+        <h1>Laadhal 1</h1>
+        <form id="truckForm">
+            <div class="form-step form-step-active">
+                <div class="form-group">
+                    <label for="length">Lengte (max 10):</label>
+                    <input type="number" id="length" name="length" min="2" max="10" required>
+                </div>
+                <button type="button" class="next-btn">Next</button>
             </div>
-            <button type="button" class="next-btn">Next</button>
-        </div>
-        <div class="form-step">
-            <div class="form-group">
-                <label for="width">Breedte (max 10):</label>
-                <input type="number" id="width" name="width" min="2" max="10" required>
+            <div class="form-step">
+                <div class="form-group">
+                    <label for="width">Breedte (max 10):</label>
+                    <input type="number" id="width" name="width" min="2" max="10" required>
+                </div>
+                <button type="button" class="prev-btn">Previous</button>
+                <button type="button" class="next-btn">Next</button>
             </div>
-            <button type="button" class="prev-btn">Previous</button>
-            <button type="button" class="next-btn">Next</button>
-        </div>
-        <div class="form-step">
-            <div class="form-group">
-                <label for="interval">Aankomst interval (seconden):</label>
-                <input type="number" id="interval" name="interval" required>
+            <div class="form-step">
+                <div class="form-group">
+                    <label for="interval">Aankomst interval (seconden):</label>
+                    <input type="number" id="interval" name="interval" required>
+                </div>
+                <button type="button" class="prev-btn">Previous</button>
+                <button type="button" class="next-btn">Next</button>
             </div>
-            <button type="button" class="prev-btn">Previous</button>
-            <button type="button" class="next-btn">Next</button>
-        </div>
-        <div class="form-step">
-            <div class="form-group">
-                <label for="type">Type:</label>
-                <select id="type" name="type" required>
-                    <option value="koud">Koud transport</option>
-                    <option value="breekbaar">Breekbaar transport</option>
-                    <option value="algemeen">Algemeen transport</option>
-                    <option value="pallets">Pallets</option>
-                    <option value="snelkoerier">Snelkoerier</option>
-                </select>
+            <div class="form-step">
+                <div class="form-group">
+                    <label for="type">Type:</label>
+                    <select id="type" name="type" required>
+                        <option value="koud">Koud transport</option>
+                        <option value="breekbaar">Breekbaar transport</option>
+                        <option value="algemeen">Algemeen transport</option>
+                        <option value="pallets">Pallets</option>
+                        <option value="snelkoerier">Snelkoerier</option>
+                    </select>
+                </div>
+                <button type="button" class="prev-btn">Previous</button>
+                <button type="submit" id="submitForm">Maak Vrachtwagen</button>
             </div>
-            <button type="button" class="prev-btn">Previous</button>
-            <button type="submit" id="submitForm">Maak Vrachtwagen</button>
-        </div>
-    </form>
-    <button id="tst-toggle">toggle</button>
+        </form>
+        <button id="tst-toggle">toggle</button>
 
-    <div class="extraFields">
-        <label for="locationInput">Locatie voor Weercheck:</label>
-        <input type="text" id="locationInput" placeholder="Stad naam" value="Amsterdam">
-        <button id="checkWeatherBtn">Check Weer</button>
-        <button id="addConveyorBelt">Voeg Conveyor Belt toe</button>
+        <div class="extraFields">
+            <label for="locationInput">Locatie voor Weercheck:</label>
+            <input type="text" id="locationInput" placeholder="Stad naam" value="Amsterdam">
+            <button id="checkWeatherBtn">Check Weer</button>
+            <button id="addConveyorBelt">Voeg Conveyor Belt toe</button>
+        </div>
+
+        <div id="weatherResult"></div>
+        <div id="apiResponseContainer"></div>
+
+        <div id="conveyor-belt-container" class="unselectable">Conveyor Belt Area</div>
+
+        <div id="truckContainer" class="truck-container unselectable">Truck Container</div>
     </div>
+    
+    <div id="laadhal2" hidden>
+        <h1>Laadhal 2</h1>
+        <form id="truckForm">
+            <div class="form-step form-step-active">
+                <div class="form-group">
+                    <label for="length">Lengte (max 10):</label>
+                    <input type="number" id="length" name="length" min="2" max="10" required>
+                </div>
+                <button type="button" class="next-btn">Next</button>
+            </div>
+            <div class="form-step">
+                <div class="form-group">
+                    <label for="width">Breedte (max 10):</label>
+                    <input type="number" id="width" name="width" min="2" max="10" required>
+                </div>
+                <button type="button" class="prev-btn">Previous</button>
+                <button type="button" class="next-btn">Next</button>
+            </div>
+            <div class="form-step">
+                <div class="form-group">
+                    <label for="interval">Aankomst interval (seconden):</label>
+                    <input type="number" id="interval" name="interval" required>
+                </div>
+                <button type="button" class="prev-btn">Previous</button>
+                <button type="button" class="next-btn">Next</button>
+            </div>
+            <div class="form-step">
+                <div class="form-group">
+                    <label for="type">Type:</label>
+                    <select id="type" name="type" required>
+                        <option value="koud">Koud transport</option>
+                        <option value="breekbaar">Breekbaar transport</option>
+                        <option value="algemeen">Algemeen transport</option>
+                        <option value="pallets">Pallets</option>
+                        <option value="snelkoerier">Snelkoerier</option>
+                    </select>
+                </div>
+                <button type="button" class="prev-btn">Previous</button>
+                <button type="submit" id="submitForm">Maak Vrachtwagen</button>
+            </div>
+        </form>
+        <button id="tst-toggle">toggle</button>
 
-    <div id="weatherResult"></div>
-    <div id="apiResponseContainer"></div>
+        <div class="extraFields">
+            <label for="locationInput">Locatie voor Weercheck:</label>
+            <input type="text" id="locationInput" placeholder="Stad naam" value="Amsterdam">
+            <button id="checkWeatherBtn">Check Weer</button>
+            <button id="addConveyorBelt">Voeg Conveyor Belt toe</button>
+        </div>
 
-    <div id="conveyor-belt-container" class="unselectable">Conveyor Belt Area</div>
+        <div id="weatherResult"></div>
+        <div id="apiResponseContainer"></div>
 
-    <div id="truckContainer" class="truck-container unselectable">Truck Container</div>
+        <div id="conveyor-belt-container" class="unselectable">Conveyor Belt Area</div>
 
+        <div id="truckContainer" class="truck-container unselectable">Truck Container</div>
+    </div>
+    
     <script type="module" src="backend/controllers/HomeController.js" defer></script>
 </body>
 
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 <!-- 
