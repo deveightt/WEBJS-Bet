@@ -21,12 +21,6 @@ export default class HallController {
 
         this.weatherController.setupWeatherCheckButton(this.hallElement.querySelector('.checkWeatherBtn'));
 
-        this.hallElement.querySelector('#tst-toggle').addEventListener('click', () => {
-            this.conveyorBeltController.belts.forEach(belt => {
-                belt.toggleBelt();
-            });
-        });
-
         initializeForm(this.hallElement);
     }
 

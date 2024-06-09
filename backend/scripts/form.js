@@ -57,18 +57,25 @@ export function initializeForm(container) {
         const interval = parseInt(intervalInput.value, 10);
         clearErrors();
 
-        if (step === 0 && (isNaN(length) || length > maxLength || length < minLength)) {
-            showError(lengthInput, `Length should be between ${minLength} and ${maxLength}.`);
-            return false;
-        } else if (step === 1 && (isNaN(width) || width > maxWidth || width < minWidth)) {
-            showError(widthInput, `Width should be between ${minWidth} and ${maxWidth}.`);
-            return false;
-        } else if (step === 2 && (isNaN(interval) || interval < 0)) {
-            showError(intervalInput, 'Interval should be a non-negative number.');
-            return false;
+        if (step === 0) {
+            if (isNaN(length) || length > maxLength || length < minLength) {
+                showError(lengthInput, `Lengthe moet tussen de ${minLength} en ${maxLength} zijn.`);
+                return false;
+            }
+        } else if (step === 1) {
+            if (isNaN(width) || width > maxWidth || width < minWidth) {
+                showError(widthInput, `Breedte moet tussen de ${minWidth} en ${maxWidth} zijn.`);
+                return false;
+            }
+        } else if (step === 2) {
+            if (isNaN(interval) || interval < 0 || !Number.isInteger(parseFloat(intervalInput.value))) {
+                showError(intervalInput, 'Interval moet een geheel getal zijn en groter dan 0.');
+                return false;
+            }
         }
         return true;
     }
+
 
     function validateForm(minLength, maxLength, minWidth, maxWidth) {
         const length = parseInt(lengthInput.value, 10);
@@ -92,13 +99,20 @@ export function initializeForm(container) {
     }
 
     function showError(inputElement, message) {
-        let errorElement = container.querySelector(`.${inputElement.className}-error`);
-        if (!errorElement) {
-            errorElement = document.createElement('div');
-            errorElement.className = `${inputElement.className}-error error-message`;
-            inputElement.parentNode.appendChild(errorElement);
+        try {
+            let errorElement = container.querySelector(`.${inputElement.className}-error`);
+            if (!errorElement) {
+                errorElement = document.createElement('div');
+                errorElement.className = `${inputElement.className}-error error-message`;
+                errorElement.style.fontStyle = 'italic';
+                errorElement.style.fontWeight = 'bold';
+                errorElement.style.color = 'red';
+                inputElement.parentNode.appendChild(errorElement);
+            }
+            errorElement.textContent = message;
+        } catch (error) {
+            console.error('An error occurred during DOM manipulation:', error);
         }
-        errorElement.textContent = message;
     }
 
     function clearErrors() {

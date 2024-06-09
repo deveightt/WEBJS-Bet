@@ -56,10 +56,10 @@
                         </select>
                     </div>
                     <button type="button" class="prev-btn">Previous</button>
-                    <button type="submit" class="submitForm">Maak Vrachtwagen</button>
+                    <button id="truck-submit-form" type="submit" class="submitForm">Maak Vrachtwagen</button>
+                    <p id="truck-create-message"></p>
                 </div>
             </form>
-            <button id="tst-toggle">toggle</button>
 
             <div class="extraFields">
                 <label for="locationInput">Locatie voor Weercheck:</label>
@@ -69,11 +69,14 @@
             </div>
 
             <div id="weatherResult" class="weatherResult"></div>
+            <div id="conveyor-belt-message"></div>
             <div id="apiResponseContainer" class="apiResponseContainer"></div>
 
             <div id="conveyor-belt-container" class="conveyor-belt-container unselectable">Conveyor Belt Area</div>
 
-            <div id="truckContainer" class="truckContainer truck-container unselectable">Truck Container</div>
+            <div id="truckContainer" class="truckContainer truck-container unselectable">
+                <p>Truck Container</p>
+            </div>
         </div>
     </template>
 

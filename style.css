@@ -4,7 +4,6 @@ body {
 }
 
 #truckForm {
-    margin: 10px;
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
@@ -59,9 +58,27 @@ button {
     }
 }
 
-/* 
-    Truck Styling
-*/
+/* Ensure the container text spans the entire width */
+#truckContainer {
+    display: block;
+    margin-top: 30px;
+    min-height: 419px;
+}
+
+#truckContainer::after {
+    content: "";
+    display: block;
+    width: 100%;
+    clear: both;
+}
+
+/* Reset styles for trucks to ensure they take only the minimum width needed */
+.truck-wrapper {
+    float: left;
+    margin: 10px;
+}
+
+/* Rest of the styles */
 @keyframes slideInFromBottom {
     0% {
         transform: translateY(100%);
@@ -99,16 +116,6 @@ button {
     animation: slideOutToBottom 2s ease-out;
     animation-fill-mode: forwards;
 }
-
-#truckContainer {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    margin-top: 30px;
-    margin: 10px;
-    min-height: 419px;
-}
-
 
 .truck {
     display: grid;
@@ -152,4 +159,45 @@ button {
 
 .form-step-active {
     display: block;
+}
+
+#truck-create-message,
+#weatherResult,
+#conveyor-belt-message {
+    color: red;
+    font-weight: bold;
+    font-style: italic;
+}
+
+.load-hall {
+    padding: 10px;
+}
+
+/* Add this to your existing CSS */
+button.error {
+    background-color: red;
+    color: white;
+    animation: shake 0.5s;
+}
+
+@keyframes shake {
+    0% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-5px);
+    }
+
+    50% {
+        transform: translateX(5px);
+    }
+
+    75% {
+        transform: translateX(-5px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
 }

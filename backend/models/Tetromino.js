@@ -1,37 +1,11 @@
+// Tetromino.js
+import { enableDragDrop } from './DragAndDrop.js';
+
 class Tetromino {
     constructor(shape, color) {
         this.shape = shape;
         this.color = color;
         this.element = null;
-    }
-
-    enableDragDrop(element) {
-        element.setAttribute('draggable', true);
-        element.addEventListener('dragstart', (event) => {
-            const offsetX = event.clientX - element.getBoundingClientRect().left;
-            const offsetY = event.clientY - element.getBoundingClientRect().top;
-
-            // Calculate the cell index based on the mouse position
-            const cellSize = 31; // 30px + 1px gap for each cell
-            const x = Math.floor(offsetX / cellSize);
-            const y = Math.floor(offsetY / cellSize);
-            const cellIndex = y * this.shape[0].length + x;
-            const cell = element.children[cellIndex]; // Access the actual cell using the calculated index
-
-            if (cell && cell.dataset.isPart === 'true') {
-                // Set drag offsets and the drag data
-                element.dataset.dragOffsetX = offsetX;
-                element.dataset.dragOffsetY = offsetY;
-                event.dataTransfer.setData('text/plain', element.id);
-                event.dataTransfer.effectAllowed = 'move';
-                let childFocusIndex = Array.prototype.indexOf.call(element.children, cell);
-                event.target.dataset.childFocusIndex = childFocusIndex;
-
-            } else {
-                // Prevent dragging if the cell is not valid
-                event.preventDefault();
-            }
-        });
     }
 
     draw() {
@@ -57,7 +31,7 @@ class Tetromino {
         });
 
         tetrominoElement.id = `tetromino-${Math.random().toString(36).substr(2, 9)}`;
-        this.enableDragDrop(tetrominoElement);
+        enableDragDrop(tetrominoElement, this.shape);
 
         this.element = tetrominoElement;
         return tetrominoElement;

@@ -13,7 +13,7 @@ class TruckController {
 
   attachFormSubmitEvent() {
     const form = this.container.querySelector('form');
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const truckLength = parseInt(this.container.querySelector('.length').value, 10);
@@ -26,7 +26,7 @@ class TruckController {
 
       if (isLengthValid(truckLength, minAllowedLength, maxAllowedLength) &&
         isWidthValid(truckWidth, minAllowedWidth, maxAllowedWidth)) {
-        this.addTruck(new Truck(truckLength, truckWidth, truckType, this.container));
+        await this.addTruck(new Truck(truckLength, truckWidth, truckType, this.container));
       } else {
         if (!isLengthValid(truckLength, minAllowedLength, maxAllowedLength)) {
           alert(`Length should be between ${minAllowedLength} and ${maxAllowedLength}.`);
@@ -46,38 +46,64 @@ class TruckController {
     }
   }
 
-  addTruck(truck) {
-    const interval = parseInt(this.container.querySelector('.interval').value, 10);
-    console.log(`Interval: ${interval}`); // Debug: Log interval value
+  async addTruck(truck) {
+    if (this.trucks.length >= 10) {
+      this.container.querySelector('#truck-create-message').innerText = 'Je kan niet meer dan 10 vrachtwagens maken!';
+      this.container.querySelector('#truck-submit-form').disabled = true;
+      return;
+    }
 
-    setTimeout(() => {
-      this.trucks.push(truck);
-      this.renderTruck(truck);
-    }, interval * 1000);
+    // Disable the submit button to prevent further submissions
+    this.container.querySelector('#truck-submit-form').disabled = true;
+
+    const interval = parseInt(this.container.querySelector('.interval').value, 10);
+
+    await new Promise(resolve => setTimeout(resolve, interval * 1000));
+    this.trucks.push(truck);
+    this.renderTruck(truck);
+
+    // Re-enable the submit button if the truck limit is not yet reached
+    if (this.trucks.length < 10) {
+      this.container.querySelector('#truck-submit-form').disabled = false;
+    }
   }
 
   renderTruck(truck) {
     const truckElement = truck.createTruckElement();
     const sendButton = document.createElement('button');
     sendButton.innerText = 'Send';
-    sendButton.addEventListener('click', () => {
+    sendButton.addEventListener('click', async () => {
       if (this.weatherController.canSendTruck(truck.type)) {
-        this.sendTruck(truck, truckElement);
+        await this.sendTruck(truck, truckElement);
+        this.container.querySelector('#truck-create-message').innerText = '';
+        this.container.querySelector('#truck-submit-form').disabled = false;
       } else {
-        alert(`The ${truck.type} cannot be sent due to current weather conditions.`);
+        // Animate the button red and show a message
+        sendButton.classList.add('error');
+        sendButton.innerText = `Kan niet vesturen door weer.`;
+        setTimeout(() => {
+          sendButton.classList.remove('error');
+          sendButton.innerText = 'Send';
+        }, 3000); // Reset after 3 seconds
       }
     });
     truckElement.appendChild(sendButton);
     this.trucksContainer.appendChild(truckElement);
   }
 
-  sendTruck(truck, truckElement) {
+
+  async sendTruck(truck, truckElement) {
     truckElement.classList.add('depart');
 
-    setTimeout(() => {
-      this.trucks = this.trucks.filter(t => t !== truck);
-      truckElement.remove();
-    }, 2000);
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    this.trucks = this.trucks.filter(t => t !== truck);
+    truckElement.remove();
+
+    // Re-enable the submit button once a truck is removed
+    if (this.trucks.length < 10) {
+      this.container.querySelector('#truck-submit-form').disabled = false;
+      this.container.querySelector('#truck-create-message').innerText = '';
+    }
   }
 }
 

@@ -1,3 +1,7 @@
+// Truck.js
+import { handleDrop } from './DragAndDrop.js';
+import { createTruckElement } from '../views/TruckCreator.js';
+
 class Truck {
   constructor(length, width, type, container) {
     this.length = length;
@@ -15,82 +19,16 @@ class Truck {
   }
 
   createTruckElement() {
-    const truckWrapper = document.createElement('div');
-    truckWrapper.classList.add('truck-wrapper'); // Apply animation only to the wrapper
-
-    const label = document.createElement('div');
-    label.textContent = `${this.type} - ${this.length}x${this.width}`;
-    label.classList.add('label');
-    label.classList.add('unselectable');
-    truckWrapper.appendChild(label);
-
-    const truck = document.createElement('div');
-    truck.classList.add('truck');
-    truck.classList.add('drop-zone');
-    truck.style.display = 'grid';
-    truck.style.gridTemplateColumns = `repeat(${this.width}, 30px)`;
-    truck.style.gridTemplateRows = `repeat(${this.length}, 30px)`;
-    truck.dataset.cellSize = 30;
-
-    for (let i = 0; i < this.length * this.width; i++) {
-      const block = document.createElement('div');
-      block.className = 'truck-block';
-      block.style.width = '30px';
-      block.style.height = '30px';
-      block.dataset.x = i % this.width;
-      block.dataset.y = Math.floor(i / this.width);
-      block.dataset.filled = false;
-      block.addEventListener('dragover', event => {
-        event.preventDefault();
-        this.mouseCoord.x = block.dataset.x;
-        this.mouseCoord.y = block.dataset.y;
-      });
-      truck.appendChild(block);
-    }
-
-    truck.addEventListener('drop', this.handleDrop.bind(this));
-    truckWrapper.appendChild(truck);
-    this.truckContainer = truckWrapper;
-    return truckWrapper;
+    return createTruckElement(this);
   }
 
-  handleDrop(event) {
-    event.preventDefault();
-    const mouseX = event.clientX;
-    const mouseY = event.clientY;
-    const targetCell = this.getTargetCell();
-    if (!targetCell) {
-      console.log("targetCell not found. " + targetCell);
-      return;
-    }
-    if (!targetCell) {
-      console.log("Drop outside truck bounds.");
-      return;
-    }
-
-    const tetrominoId = event.dataTransfer.getData('text/plain');
-    const tetrominoElement = this.container.querySelector(`#${tetrominoId}`);
-    if (!tetrominoElement) {
-      console.log("Tetromino not found.");
-      return;
-    }
-
-    const focusedCellIndex = parseInt(tetrominoElement.dataset.childFocusIndex);
-    const tetrominoData = JSON.parse(tetrominoElement.dataset.object);
-    const origin = this.calculateTetrominoOrigin(targetCell, focusedCellIndex, tetrominoData);
-
-    if (!this.isValidPlacement(origin, tetrominoData)) {
-      console.log("Invalid placement.");
-      return;
-    }
-
-    this.placeTetromino(origin, tetrominoData, tetrominoElement);
+  async handleDrop(event) {
+    await handleDrop(event, this.container, this);
   }
 
   getTargetCell() {
     const x = this.mouseCoord.x;
     const y = this.mouseCoord.y;
-
     return this.truckContainer.querySelector(`.truck-block[data-x="${x}"][data-y="${y}"]`);
   }
 
@@ -98,10 +36,9 @@ class Truck {
     const targetX = parseInt(targetCell.dataset.x);
     const targetY = parseInt(targetCell.dataset.y);
 
-    // Assuming each row in `shape` has the same number of columns (tetrominoData.shape[0].length)
     const tetrominoWidth = tetrominoData.shape[0].length;
-    const offsetX = focusedCellIndex % tetrominoWidth;  // Column index of the focused cell
-    const offsetY = Math.floor(focusedCellIndex / tetrominoWidth);  // Row index of the focused cell
+    const offsetX = focusedCellIndex % tetrominoWidth;
+    const offsetY = Math.floor(focusedCellIndex / tetrominoWidth);
 
     return { x: targetX - offsetX, y: targetY - offsetY };
   }
@@ -113,10 +50,10 @@ class Truck {
           const checkX = origin.x + x;
           const checkY = origin.y + y;
           if (checkX < 0 || checkX >= this.width || checkY < 0 || checkY >= this.length) {
-            return false; // Out of bounds
+            return false;
           }
           if (this.grid[checkY][checkX].filled) {
-            return false; // Cell already filled
+            return false;
           }
         }
       }
@@ -124,22 +61,22 @@ class Truck {
     return true;
   }
 
-  placeTetromino(origin, tetrominoData, tetrominoElement) {
-    tetrominoData.shape.forEach((row, y) => {
-      row.forEach((cell, x) => {
+  async placeTetromino(origin, tetrominoData, tetrominoElement) {
+    for (const [y, row] of tetrominoData.shape.entries()) {
+      for (const [x, cell] of row.entries()) {
         if (cell === 1) {
           const finalX = origin.x + x;
           const finalY = origin.y + y;
           const gridCell = this.truckContainer.querySelector(`.truck-block[data-x="${finalX}"][data-y="${finalY}"]`);
-          gridCell.style.backgroundColor = tetrominoData.color; // Color the grid cell
-          gridCell.dataset.filled = 'true'; // Mark the cell as filled in the dataset
-          this.grid[finalY][finalX].filled = true; // Mark the grid model as filled
+          gridCell.style.backgroundColor = tetrominoData.color;
+          gridCell.dataset.filled = 'true';
+          this.grid[finalY][finalX].filled = true;
         }
-      });
-    });
+      }
+    }
 
-    this.blocks.push(tetrominoElement); // Add the tetromino element to the list of blocks
-    tetrominoElement.remove(); // Remove the element from its temporary position
+    this.blocks.push(tetrominoElement);
+    tetrominoElement.remove();
   }
 }
 

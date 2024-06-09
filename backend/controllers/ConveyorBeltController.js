@@ -14,14 +14,12 @@ class ConveyorBeltController {
     }
 
     createConveyorBelt() {
-        if (this.belts.length >= 5) {
-            return;
-        }
         const id = `conveyorBelt${this.belts.length + 1}`;
         const conveyorBelt = new ConveyorBelt(id, this.tetrominoController);
-        conveyorBelt.draw(this.container);
+        conveyorBelt.draw(this.container.querySelector('#conveyor-belt-container'));
         this.belts.push(conveyorBelt);
         if (this.belts.length >= 5) {
+            this.container.querySelector('#conveyor-belt-message').innerText = 'Je kan niet meer dan 5 conveyor belts maken!';
             this.container.querySelector('.addConveyorBelt').disabled = true;
         }
     }

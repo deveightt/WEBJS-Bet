@@ -5,30 +5,39 @@ class WeatherController {
         this.currentRestrictions = [];
     }
 
-    fetchWeatherData(city) {
+    async fetchWeatherData(city) {
         const url = `https://weerlive.nl/api/json-data-10min.php?key=${this.apiKey}&locatie=${encodeURIComponent(city)}`;
 
-        return fetch(url)
-            .then(response => response.json())
-            .then(data => this.processWeatherData(data.liveweer[0]))
-            .catch(error => console.error('Fout bij het ophalen van weerdata:', error));
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`Netwerkrespons was niet oké: ${response.statusText}`);
+            }
+            const data = await response.json();
+            if (!data.liveweer || data.liveweer.length === 0) {
+                throw new Error('Geen weerdata beschikbaar');
+            }
+            return this.processWeatherData(data.liveweer[0]);
+        } catch (error) {
+            console.error('Fout bij het ophalen van weerdata:', error);
+            throw error;
+        }
     }
 
     processWeatherData(weatherData) {
-        const condition = weatherData.samenv.toLowerCase(); // Korte samenvatting van het weer
-
-        const temp = parseFloat(weatherData.temp); // Temperatuur
-        const windkracht = parseInt(weatherData.windk, 10); // Windsnelheid
+        const condition = weatherData.samenv.toLowerCase();
+        const temperature = parseFloat(weatherData.temp);
+        const windForce = parseInt(weatherData.windk, 10);
 
         this.currentRestrictions = [];
 
         if (condition.includes("regen") || condition.includes("sneeuw")) {
             this.currentRestrictions.push("breekbaar");
         }
-        if (temp > 35) {
+        if (temperature > 35) {
             this.currentRestrictions.push("koud");
         }
-        if (windkracht > 7) { // Gebruik de Beaufort-schaal voor windkracht
+        if (windForce > 7) {
             this.currentRestrictions.push("pallets");
         }
 
@@ -36,31 +45,37 @@ class WeatherController {
     }
 
     setupWeatherCheckButton(buttonElement) {
-        buttonElement.addEventListener('click', () => {
+        buttonElement.addEventListener('click', async () => {
             const city = this.container.querySelector('.locationInput').value;
-            console.log(city);
-
-            this.fetchWeatherData(city)
-                .then(restrictions => this.displayRestrictions(restrictions));
+            try {
+                const restrictions = await this.fetchWeatherData(city);
+                this.displayRestrictions(restrictions);
+            } catch (error) {
+                this.displayError('Kon de weerdata niet ophalen. Probeer het later opnieuw.');
+            }
         });
     }
 
     displayRestrictions(restrictions) {
         const resultDiv = this.container.querySelector('.weatherResult');
-        resultDiv.innerHTML = restrictions.map(restriction => {
-            if (restriction === "breekbaar") {
-                return "Breekbaar Transport rijdt niet";
-            } else if (restriction === "koud") {
-                return "Koud Transport rijdt niet";
-            } else if (restriction === "pallets") {
-                return "Palletvrachtwagen rijdt niet";
-            } else {
-                return "Alle vrachtwagens rijden";
-            }
-        }).join('<br>');
+        const restrictionMessages = {
+            "breekbaar": "Breekbaar Transport rijdt niet",
+            "koud": "Koud Transport rijdt niet",
+            "pallets": "Palletvrachtwagen rijdt niet"
+        };
+
+        resultDiv.innerHTML = restrictions.length > 0 ?
+            restrictions.map(restriction => restrictionMessages[restriction]).join('<br>') :
+            "Alle vrachtwagens rijden";
+    }
+
+    displayError(message) {
+        const resultDiv = this.container.querySelector('.weatherResult');
+        resultDiv.innerHTML = `<span class="error">${message}</span>`;
     }
 
     canSendTruck(truckType) {
+        this.fetchWeatherData('Amsterdam');
         return !this.currentRestrictions.includes(truckType);
     }
 }

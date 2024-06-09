@@ -69,25 +69,25 @@ class ConveyorBelt {
         }
     }
 
-    startTetrominoAnimation() {
+    async startTetrominoAnimation() {
         if (this.intervalId === null) {
-            this.intervalId = setInterval(() => {
+            this.intervalId = setInterval(async () => {
                 if (!this.isPaused) {
                     const tetrominoElement = this.tetrominoController.drawRandomTetromino();
                     this.tetrominoElements.push({ element: tetrominoElement, startPosition: -50 });
-                    this.addTetromino(tetrominoElement);
+                    await this.addTetromino(tetrominoElement);
                 }
             }, 1500);
         }
     }
 
-    addTetromino(tetrominoElement) {
+    async addTetromino(tetrominoElement) {
         this.container.appendChild(tetrominoElement);
-        this.animateTetromino(tetrominoElement, -50);
+        await this.animateTetromino(tetrominoElement, -50);
     }
 
-    animateTetromino(tetrominoElement, startPosition) {
-        const move = () => {
+    async animateTetromino(tetrominoElement, startPosition) {
+        const move = async () => {
             if (this.isPaused) return;
 
             let newPosition = startPosition += 0.60;
@@ -103,7 +103,7 @@ class ConveyorBelt {
             }
         };
 
-        move();
+        await move();
     }
 
     resumeTetromino(tetrominoElement) {
