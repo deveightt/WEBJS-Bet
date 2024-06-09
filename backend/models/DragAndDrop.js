@@ -26,8 +26,6 @@ export function enableDragDrop(element, shape) {
 
 export async function handleDrop(event, container, truck) {
     event.preventDefault();
-    const mouseX = event.clientX;
-    const mouseY = event.clientY;
     const targetCell = truck.getTargetCell();
     if (!targetCell) {
         console.log("targetCell not found.");

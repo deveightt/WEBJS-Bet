@@ -78,13 +78,12 @@ class TruckController {
         this.container.querySelector('#truck-create-message').innerText = '';
         this.container.querySelector('#truck-submit-form').disabled = false;
       } else {
-        // Animate the button red and show a message
         sendButton.classList.add('error');
         sendButton.innerText = `Kan niet vesturen door weer.`;
         setTimeout(() => {
           sendButton.classList.remove('error');
           sendButton.innerText = 'Send';
-        }, 3000); // Reset after 3 seconds
+        }, 3000);
       }
     });
     truckElement.appendChild(sendButton);
