@@ -77,7 +77,7 @@ class ConveyorBelt {
                     this.tetrominoElements.push({ element: tetrominoElement, startPosition: -50 });
                     await this.addTetromino(tetrominoElement);
                 }
-            }, 1500);
+            }, 2500);
         }
     }
 
